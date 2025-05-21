@@ -174,6 +174,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -184,7 +185,7 @@ const config = {
   },
   "inlineSchema": "// /home/user/saas/prisma/schema.prisma\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\" // Correct relative path from project_root/prisma\n  // to project_root/src/generated/prisma\n}\n\ndatasource db {\n  provider = \"postgresql\" // Ensure this is \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// Your Tenant and User models (with phoneNumber)\nmodel Tenant {\n  id          String @id @default(cuid())\n  subdomain   String @unique\n  name        String\n  tenant_type String\n\n  primaryColor String?\n  logoUrl      String?\n\n  users User[]\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel User {\n  id          String  @id @default(cuid())\n  email       String\n  password    String // Hashed password\n  name        String?\n  phoneNumber String? // Added phone number, optional\n  role        String // e.g., \"admin\", \"manager\", \"member\"\n\n  tenantId String\n  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@unique([tenantId, email])\n}\n",
   "inlineSchemaHash": "5d537c015928f5ee4d8e56b22adad0e9a08aa40f078934c35ffedd97b365502c",
-  "copyEngine": false
+  "copyEngine": true
 }
 config.dirname = '/'
 

@@ -2,8 +2,9 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma" // Correct relative path from project_root/prisma
-                                       // to project_root/src/generated/prisma
+  // The 'output' line has been removed or commented out.
+  // Prisma will now generate the client to the default location:
+  // node_modules/.prisma/client
 }
 
 datasource db {

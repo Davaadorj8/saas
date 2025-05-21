@@ -1,113 +1,88 @@
 // src/app/select-tenant/page.tsx
-"use client"; // Directive for Client Component
+"use client"; // This page needs client-side interaction
 
-import { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
-// This list should ideally be kept in sync with your middleware.ts
-// Or better, imported from a shared configuration module if it grows or changes.
-const KNOWN_TENANT_SUBDOMAINS: string[] = ['client', 'supplier', 'customer']; // <<-- YOUR ACTUAL TENANT SUBDOMAINS
+export default function SelectTenantPage() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [subdomain, setSubdomain] = useState('');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-export default function TenantSelectionPage() {
-  const [baseAppUrl, setBaseAppUrl] = useState<string>('');
+    useEffect(() => {
+        const error = searchParams.get('error');
+        const attempted = searchParams.get('attempted');
+        if (error === 'unknown_tenant' && attempted) {
+            setErrorMessage(`The organization '${attempted}' was not found. Please check the name or contact support.`);
+        } else if (error === 'missing_host') {
+            setErrorMessage('There was an issue determining your organization. Please try entering its address.');
+        } else if (error === 'unrecognized_host') {
+             setErrorMessage('The web address you used is not recognized. Please enter your organization\'s address.');
+        } else if (error) {
+            setErrorMessage('An unexpected error occurred. Please try again.');
+        }
+    }, [searchParams]);
 
-  useEffect(() => {
-    // Determine base URL on the client side to correctly handle protocol and host.
-    // For production, rely on an environment variable.
-    // For development, construct from window.location or default to localhost:3000.
-    if (process.env.NEXT_PUBLIC_APP_URL) {
-      setBaseAppUrl(process.env.NEXT_PUBLIC_APP_URL);
-    } else if (typeof window !== 'undefined') {
-      // Fallback for development if NEXT_PUBLIC_APP_URL is not set
-      // This ensures http://localhost:3000 works correctly
-      if (window.location.hostname === 'localhost') {
-        setBaseAppUrl(`${window.location.protocol}//${window.location.host}`); // e.g. http://localhost:3000
-      } else {
-        // Fallback for other non-localhost dev environments or if env var is missing
-        // This might happen in some preview environments if not configured.
-        // Tries to construct a base URL without any subdomains.
-        const parts = window.location.hostname.split('.');
-        const mainDomain = parts.length > 1 ? parts.slice(-2).join('.') : window.location.hostname;
-        setBaseAppUrl(`${window.location.protocol}//${mainDomain}${window.location.port ? ':' + window.location.port : ''}`);
-      }
-    } else {
-      // Absolute fallback (e.g., during SSR pre-hydration if needed, though less critical for this client page)
-      setBaseAppUrl('http://localhost:3000');
-    }
-  }, []);
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (subdomain.trim()) {
+            // In development, construct localhost URL. In production, use the actual domain.
+            const targetHost = process.env.NODE_ENV === 'production'
+                ? `${subdomain.trim()}.${process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com'}`
+                : `${subdomain.trim()}.localhost:3000`;
+            window.location.href = `http://${targetHost}`; // Full redirect to change host
+        } else {
+            setErrorMessage("Please enter your organization's subdomain.");
+        }
+    };
 
-  const handleTenantSelect = (tenantSubdomain: string) => {
-    if (!baseAppUrl) {
-      console.error("Base application URL is not set. Cannot redirect.");
-      // Optionally, show an error to the user
-      return;
-    }
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+            <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-center">
+                <h1 className="text-3xl font-bold text-gray-800">Welcome to SAASPro</h1>
+                <p className="text-gray-600">
+                    Please enter your organization's address (subdomain) to proceed.
+                </p>
 
-    // The baseAppUrl should already include the protocol and correct host/port.
-    // We just need to prepend the subdomain.
-    try {
-      const urlObject = new URL(baseAppUrl); // Validate and parse the baseAppUrl
-      const targetUrl = `${urlObject.protocol}//${tenantSubdomain}.${urlObject.host}/login`;
+                {errorMessage && (
+                    <p className="text-red-500 bg-red-100 p-3 rounded-md">{errorMessage}</p>
+                )}
 
-      console.log('Redirecting to:', targetUrl);
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label htmlFor="subdomain" className="sr-only">
+                            Organization Subdomain
+                        </label>
+                        <div className="flex items-center">
+                            <input
+                                id="subdomain"
+                                name="subdomain"
+                                type="text"
+                                required
+                                className="appearance-none rounded-l-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                                placeholder="e.g., acme"
+                                value={subdomain}
+                                onChange={(e) => setSubdomain(e.target.value.toLowerCase())}
+                                autoCapitalize="none"
+                            />
+                            <span className="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm rounded-r-md">
+                                .{process.env.NODE_ENV === 'production' ? (process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com') : 'localhost:3000'}
+                            </span>
+                        </div>
+                    </div>
 
-      if (typeof window !== 'undefined') {
-        window.location.href = targetUrl; // Best for subdomain navigation
-      } else {
-        console.error("window object not available for redirection.");
-      }
-    } catch (error) {
-      console.error("Error constructing target URL:", error);
-      // Handle invalid baseAppUrl if necessary
-    }
-  };
-
-  if (!baseAppUrl) {
-    // Optional: Show a loading state or a simple message while baseAppUrl is being determined.
-    // This flicker should be minimal.
-    return <div>Loading tenant selection...</div>;
-  }
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{ marginBottom: '30px', fontSize: 'clamp(1.5rem, 5vw, 2.2rem)', color: '#333' }}>
-        Select Your Portal
-      </h1>
-      <ul style={{ listStyle: 'none', padding: 0, width: '100%', maxWidth: '350px' }}>
-        {KNOWN_TENANT_SUBDOMAINS.map((tenant) => (
-          <li
-            key={tenant}
-            onClick={() => handleTenantSelect(tenant)}
-            style={{
-              cursor: 'pointer',
-              padding: '15px 25px',
-              margin: '12px 0',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              textAlign: 'center',
-              backgroundColor: '#f9f9f9',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-              transition: 'transform 0.2s ease-in-out, background-color 0.2s ease-in-out',
-              fontSize: '1.1rem',
-              fontWeight: 500,
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.backgroundColor = '#e9e9e9';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.backgroundColor = '#f9f9f9';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Access {tenant.charAt(0).toUpperCase() + tenant.slice(1)}
-          </li>
-        ))}
-      </ul>
-      <p style={{ marginTop: '40px' }}>
-        <a href="/about-us" style={{ color: '#007bff', textDecoration: 'none', fontSize: '0.9rem' }}>
-          Learn more about us
-        </a>
-      </p>
-    </div>
-  );
+                    <button
+                        type="submit"
+                        className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        Go to My Organization
+                    </button>
+                </form>
+                <p className="text-xs text-gray-500">
+                    Example: If your organization is 'acme.saaspro.com', enter 'acme'.
+                </p>
+            </div>
+        </div>
+    );
 }
