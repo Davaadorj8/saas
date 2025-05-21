@@ -1,12 +1,11 @@
 // src/components/auth/SelectTenantForm.tsx
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation'; // useRouter not strictly used here but fine
 import { useState, useEffect, FormEvent } from 'react';
 
 export default function SelectTenantForm() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    const searchParams = useSearchParams(); // For reading error query params
     const [subdomain, setSubdomain] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -63,13 +62,40 @@ export default function SelectTenantForm() {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const trimmedSubdomain = subdomain.trim().toLowerCase();
+
         if (trimmedSubdomain) {
-            const productionDomain = process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com';
-            const targetHost = process.env.NODE_ENV === 'production'
-                ? `${trimmedSubdomain}.${productionDomain}`
-                : `${trimmedSubdomain}.localhost:3000`;
-            const protocol = typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'https' : 'http';
-            window.location.href = `${protocol}://${targetHost}`;
+            if (typeof window === 'undefined') {
+                // This check is mostly for robustness; this is a client component.
+                setErrorMessage("Cannot determine redirect URL. Please try again.");
+                return;
+            }
+
+            let baseHost = window.location.host; // Start with the current full host
+
+            if (window.location.hostname === 'localhost') {
+                // Ensures correct port for local development if not already present or different
+                baseHost = 'localhost:3000';
+            } else {
+                // For production, if a specific production domain is set and we are on it,
+                // we want to form subdomains of THAT domain.
+                // Otherwise (e.g., on a Vercel preview URL like *.vercel.app),
+                // we form subdomains of the current full host.
+                const productionDomainEnv = process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN;
+                if (productionDomainEnv && window.location.hostname.endsWith(productionDomainEnv)) {
+                    // Handles cases like being on "www.saaspro.com" or "saaspro.com"
+                    // and wanting to redirect to "client.saaspro.com"
+                    baseHost = productionDomainEnv;
+                }
+                // If not on localhost and not on the configured productionDomain,
+                // baseHost remains window.location.host (e.g., your-preview-url.vercel.app)
+            }
+
+            const targetHost = `${trimmedSubdomain}.${baseHost}`;
+            const protocol = window.location.protocol; // Use the current protocol (http: or https:)
+
+            console.log(`Redirecting to: ${protocol}//${targetHost}`);
+            window.location.href = `${protocol}//${targetHost}`;
+
         } else {
             setErrorMessage("Please enter your organization's address (e.g., 'acme').");
         }
@@ -79,16 +105,18 @@ export default function SelectTenantForm() {
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-center">
             <img
                 className="mx-auto h-12 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+                src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" // Replace with your actual logo
                 alt="SAASPro Logo"
             />
-            <h1 className="text-3xl font-bold text-gray-800 mt-4">Welcome to SAASPro</h1>
+            <h1 className="text-3xl font-bold text-gray-800 mt-4">Welcome to SAASPro</h1> {/* Your App Name */}
             <p className="text-gray-600">
                 Please enter your organization's unique address to continue.
             </p>
+
             {errorMessage && (
                 <p className="text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200">{errorMessage}</p>
             )}
+
             <form onSubmit={handleSubmit} className="space-y-4 pt-2">
                 <div>
                     <label htmlFor="subdomain" className="sr-only">
@@ -108,10 +136,16 @@ export default function SelectTenantForm() {
                             spellCheck="false"
                         />
                         <span className="inline-flex items-center h-[46px] px-3 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md">
-                            .{process.env.NODE_ENV === 'production' ? (process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com') : 'localhost:3000'}
+                           .{/* Display hint for the domain part */}
+                           {
+                                typeof window !== 'undefined' && window.location.hostname === 'localhost'
+                                ? 'localhost:3000'
+                                : (process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com').split(':')[0]
+                           }
                         </span>
                     </div>
                 </div>
+
                 <button
                     type="submit"
                     className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
