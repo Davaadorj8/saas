@@ -1,1 +1,78 @@
+commit b9a303670331862d2a63cee5c9b1c732f9d73380
+Author: dav2adorj <dav2adorj@gmail.com>
+Date:   Wed May 21 05:13:16 2025 +0000
+
+    Add version log
+
+ version.log | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 5f3dec4546dba9943c85f61d04ba3a350ed4742b
+Author: dav2adorj <dav2adorj@gmail.com>
+Date:   Tue May 20 09:11:32 2025 +0000
+
+    first commit
+
+ .gitignore                          |   41 +
+ .idx/dev.nix                        |   46 +
+ .vscode/settings.json               |    4 +
+ README.md                           |   36 +
+ create_project.sh                   |  241 ++
+ eslint.config.mjs                   |   16 +
+ filepath-mvp.md                     |   95 +
+ filepath_structure.md               |   39 +
+ middleware.ts                       |    0
+ next.config.ts                      |    7 +
+ package-lock.json                   | 6444 +++++++++++++++++++++++++++++++++++
+ package.json                        |   29 +
+ postcss.config.mjs                  |    5 +
+ public/another-asset.svg            |    0
+ public/file.svg                     |    1 +
+ public/globe.svg                    |    1 +
+ public/icon.svg                     |    0
+ public/logo.svg                     |    0
+ public/next.svg                     |    1 +
+ public/vercel.svg                   |    1 +
+ public/window.svg                   |    1 +
+ src/app/(auth)/login/page.tsx       |    0
+ src/app/(auth)/register/page.tsx    |    0
+ src/app/(dashboard)/layout.tsx      |    0
+ src/app/client/dashboard/page.tsx   |    0
+ src/app/customer/dashboard/page.tsx |    0
+ src/app/favicon.ico                 |  Bin 0 -> 25931 bytes
+ src/app/globals.css                 |   26 +
+ src/app/layout.tsx                  |   34 +
+ src/app/page.tsx                    |  103 +
+ src/app/supplier/dashboard/page.tsx |    0
+ src/features/auth/authSlice.ts      |    0
+ src/features/tenant/tenantSlice.ts  |    0
+ src/features/user/userSlice.ts      |    0
+ src/hooks/useAuth.ts                |    0
+ src/hooks/useTenant.ts              |    0
+ src/lib/auth.ts                     |    0
+ src/lib/fetcher.ts                  |    0
+ src/lib/prisma.ts                   |    0
+ src/lib/rbac.ts                     |    0
+ src/middleware.md                   |   25 +
+ src/modules/auth/schema.ts          |    1 +
+ src/modules/auth/services.ts        |    1 +
+ src/modules/shared/dateFormatter.ts |    1 +
+ src/modules/tenant/services.ts      |    0
+ src/modules/tenant/utils.ts         |    0
+ src/modules/user/profile.ts         |    0
+ src/plugins/analytics/tracker.ts    |    0
+ src/plugins/billing/stripe.ts       |    0
+ src/plugins/notifications/socket.ts |    0
+ src/plugins/notifications/toast.tsx |    0
+ src/prisma/schema.prisma            |    0
+ src/store/index.ts                  |    0
+ src/store/rootReducer.ts            |    0
+ src/types/auth.ts                   |    0
+ src/types/tenant.ts                 |    0
+ src/types/user.ts                   |    0
+ src/utils/debounce.ts               |    0
+ src/utils/logger.ts                 |    0
+ tailwind.config.ts                  |    0
+ tsconfig.json                       |   27 +
+ 61 files changed, 7226 insertions(+)
 version_log.txt
