@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-05-21
+
+### Fixed
+
+*   Implement core tenant identification and routing
+    *   Middleware now correctly identifies tenant subdomains and sets the x-tenant-id header.
+    *   Implemented redirection logic for the tenant selection flow:
+        *   Accessing the root domain redirects to /select-tenant.
+        *   Accessing an unknown subdomain redirects to /select-tenant with an error parameter.
+    *   The /select-tenant page is functional, allowing users to input a subdomain for redirection.
+    *   Basic page rendering is now working for known tenants:
+        *   Accessing a known tenant subdomain correctly renders src/app/page.tsx with tenant-specific information (assuming DB fetching is in place).
+        *   Placeholder login (/login) and registration (/register) pages now render correctly under known tenant subdomains, displaying the relevant organization name.
+    *   Resolved TypeScript errors that were preventing successful builds.
+
 ## [0.1.0] - 2025-05-21
 
 ### Added
