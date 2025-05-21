@@ -59,48 +59,53 @@ export default function SelectTenantForm() {
         setErrorMessage(msg);
     }, [searchParams]);
 
+    // src/components/auth/SelectTenantForm.tsx - handleSubmit
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const trimmedSubdomain = subdomain.trim().toLowerCase();
-
         if (trimmedSubdomain) {
-            if (typeof window === 'undefined') {
-                // This check is mostly for robustness; this is a client component.
-                setErrorMessage("Cannot determine redirect URL. Please try again.");
-                return;
-            }
+            if (typeof window === 'undefined') return;
 
-            let baseHost = window.location.host; // Start with the current full host
+            let targetHost;
+            let protocol = 'http:'; // Default to HTTP for local/dev
 
-            if (window.location.hostname === 'localhost') {
-                // Ensures correct port for local development if not already present or different
-                baseHost = 'localhost:3000';
+            // Check if the main access point is localhost via port forwarding
+            // This condition might need adjustment based on how you access your Cloud Workstation's forwarded port
+            const isEffectivelyLocalhost = window.location.hostname === 'localhost' ||
+                                        window.location.port === '3000' || // Or whatever port you forward to locally
+                                        window.location.hostname.startsWith('127.0.0.1');
+
+
+            if (isEffectivelyLocalhost) {
+                targetHost = `${trimmedSubdomain}.localhost:3000`;
+                protocol = 'http:';
+            } else if (window.location.hostname.includes('cloudworkstations.dev')) {
+                // If HSTS is blocking HTTP on cloudworkstations.dev subdomains, this path is problematic.
+                // We are trying to force HTTP, but HSTS might prevent it.
+                // For Cloud Workstations with HSTS, direct subdomain testing becomes very hard without a proxy.
+                // Reverting to using the main Cloud Workstation URL + path-based tenancy for dev on Cloud Workstations might be easier.
+                console.warn("Attempting HTTP redirect on Cloud Workstation for subdomain, HSTS might interfere.");
+                targetHost = `${trimmedSubdomain}.${window.location.host}`;
+                protocol = 'http:';
             } else {
-                // For production, if a specific production domain is set and we are on it,
-                // we want to form subdomains of THAT domain.
-                // Otherwise (e.g., on a Vercel preview URL like *.vercel.app),
-                // we form subdomains of the current full host.
+                // Production logic
                 const productionDomainEnv = process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN;
                 if (productionDomainEnv && window.location.hostname.endsWith(productionDomainEnv)) {
-                    // Handles cases like being on "www.saaspro.com" or "saaspro.com"
-                    // and wanting to redirect to "client.saaspro.com"
-                    baseHost = productionDomainEnv;
+                    targetHost = `${trimmedSubdomain}.${productionDomainEnv}`;
+                } else {
+                    // Fallback for other production scenarios or if NEXT_PUBLIC_PRODUCTION_DOMAIN isn't set
+                    // This might still try to use the full Vercel URL etc.
+                    targetHost = `${trimmedSubdomain}.${window.location.host}`;
                 }
-                // If not on localhost and not on the configured productionDomain,
-                // baseHost remains window.location.host (e.g., your-preview-url.vercel.app)
+                protocol = 'https:'; // Production should be HTTPS
             }
-
-            const targetHost = `${trimmedSubdomain}.${baseHost}`;
-            const protocol = window.location.protocol; // Use the current protocol (http: or https:)
 
             console.log(`Redirecting to: ${protocol}//${targetHost}`);
             window.location.href = `${protocol}//${targetHost}`;
-
         } else {
             setErrorMessage("Please enter your organization's address (e.g., 'acme').");
         }
     };
-
     return (
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-center">
             <img
