@@ -7,14 +7,16 @@ Routes still map to tenant folders for code organization.
 
 Deployment and DNS configured for subdomains.
 
+
 Example middleware adjustment:
 ts
 Copy
 Edit
 export function middleware(req: NextRequest) {
   const host = req.headers.get('host') || ''
-  const tenant = host.split('.')[0] // supplier, customer, client
-  if (!['supplier', 'customer', 'client'].includes(tenant)) {
+  const knownTenants = ['supplier', 'customer', 'client']; // Keep this in sync with KNOWN_TENANT_SUBDOMAINS in middleware.ts
+  const tenant = host.split('.')[0] 
+  if (!knownTenants.includes(tenant)) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
   const res = NextResponse.next()

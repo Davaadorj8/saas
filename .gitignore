@@ -16,6 +16,8 @@
 # next.js
 /.next/
 /out/
+*.db
+*.db-journal
 
 # production
 /build
