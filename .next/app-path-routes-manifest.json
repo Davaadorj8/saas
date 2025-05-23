@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/(auth)/login/page": "/login",
+  "/(auth)/register/page": "/register",
+  "/client/dashboard/page": "/client/dashboard",
+  "/page": "/",
+  "/customer/dashboard/page": "/customer/dashboard",
+  "/supplier/dashboard/page": "/supplier/dashboard",
+  "/select-tenant/page": "/select-tenant"
+}
