@@ -1,124 +1,77 @@
-// src/app/(auth)/register/page.tsx
-import React from 'react';
+// C:\Users\user\Documents\saas\src\app\(auth)\register\page.tsx
 import { headers } from 'next/headers';
 import Link from 'next/link';
+import RegisterForm from '@/components/auth/RegisterForm'; // Import the Client Component
 
-// Placeholder for RegisterForm - we'll create this properly later
-const PlaceholderRegisterForm = ({ tenantName }: { tenantName?: string | null }) => {
-    // ***** ADD return HERE *****
-    return (
-        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                    Full Name
-                </label>
-                <div className="mt-1">
-                    <input
-                        id="name"
-                        name="name"
-                        type="text"
-                        autoComplete="name"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                </div>
-            </div>
-            <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                    Email address
-                </label>
-                <div className="mt-1">
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                </div>
-            </div>
-
-            <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password
-                </label>
-                <div className="mt-1">
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                </div>
-            </div>
-             <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
-                    Confirm Password
-                </label>
-                <div className="mt-1">
-                    <input
-                        id="confirm-password"
-                        name="confirm-password"
-                        type="password"
-                        autoComplete="new-password"
-                        required
-                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    />
-                </div>
-            </div>
-
-            <div>
-                <button
-                    type="submit"
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Create Account {tenantName ? `for ${tenantName}` : ''}
-                </button>
-            </div>
-        </form>
-    );
-};
-
+const NEXT_PUBLIC_APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'MySuperSaaS';
 
 export default async function RegisterPage() {
+    // Use 'await' if your Next.js version's typings or behavior for headers() in async components necessitate it.
+    // Based on your previous feedback, 'await' fixed a similar issue for login.
     const headerList = await headers();
-    const tenantSubdomain = headerList.get('x-tenant-id');
-    let tenantDisplayName = "SAAS Platform";
+    const tenantSubdomain = headerList.get('x-tenant-id'); // e.g., "supplier", "client", or null
 
-   if (tenantSubdomain) {
-       tenantDisplayName = `Org: ${tenantSubdomain}`;
-   }
+    let tenantDisplayName = NEXT_PUBLIC_APP_NAME; // Default if no specific tenant context
+    let pageTitleAction = "Create your account";
+
+    if (tenantSubdomain) {
+        const capitalizedSubdomain = tenantSubdomain.charAt(0).toUpperCase() + tenantSubdomain.slice(1);
+        tenantDisplayName = `${capitalizedSubdomain} Portal`; // e.g., "Supplier Portal"
+        pageTitleAction = `Join ${tenantDisplayName}`;
+    } else {
+        // This case implies registration on the root domain.
+        // Your middleware might redirect this to /select-tenant if root registration isn't allowed,
+        // or this page could be used for a flow where the user also creates a new tenant.
+        // For now, we'll assume it's a generic registration if no tenantSubdomain.
+        console.warn("RegisterPage: No tenant subdomain identified. Proceeding with generic registration or new tenant flow (if applicable).");
+        // tenantDisplayName remains NEXT_PUBLIC_APP_NAME
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <img
                     className="mx-auto h-12 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-                    alt="Workflow"
+                    src="/logo.svg" // Ensure logo.svg is in your /public folder
+                    alt={`${NEXT_PUBLIC_APP_NAME} Logo`}
                 />
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Create your account
-                    {tenantSubdomain && <span className="block text-lg font-medium text-indigo-600">for {tenantDisplayName}</span>}
+                    {pageTitleAction}
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600">
                     Already have an account?{' '}
-                    <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link href={tenantSubdomain ? `/login` : "/login"} /* Stays on subdomain if present */
+                          className="font-medium text-indigo-600 hover:text-indigo-500">
                         Sign in
                     </Link>
                 </p>
+                {/* Optionally, provide a link to select tenant if user landed here by mistake */}
+                {tenantSubdomain && (
+                     <p className="mt-1 text-center text-sm text-gray-600">
+                        Or{' '}
+                        <Link href="/select-tenant" className="font-medium text-indigo-600 hover:text-indigo-500">
+                            access a different organization
+                        </Link>
+                    </p>
+                )}
             </div>
+
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    {/* This is where the component is used, error line was pointing here */}
-                    <PlaceholderRegisterForm tenantName={tenantSubdomain} />
+                    {/* Pass only serializable data props to the Client Component */}
+                    <RegisterForm
+                        tenantSubdomain={tenantSubdomain}
+                        tenantDisplayName={tenantDisplayName}
+                    />
                 </div>
             </div>
-            <div className="mt-4 text-center text-xs text-gray-500">
-                (Register page placeholder for {tenantSubdomain ? `subdomain: ${tenantSubdomain}` : 'generic access'})
+
+            <div className="mt-6 text-center text-xs text-gray-500">
+                {tenantSubdomain ? (
+                    <p>You are creating an account for the <span className="font-semibold">{tenantDisplayName}</span>.</p>
+                ) : (
+                    <p>Creating a new account on {NEXT_PUBLIC_APP_NAME}.</p>
+                )}
             </div>
         </div>
     );

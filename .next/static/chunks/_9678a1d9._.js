@@ -5,26 +5,40 @@
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
-// src/components/auth/SelectTenantForm.tsx
+// C:\Users\user\Documents\saas\src\components\auth\SelectTenantForm.tsx
 __turbopack_context__.s({
     "default": (()=>SelectTenantForm)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)"); // useRouter not strictly used here but fine
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 "use client";
 ;
 ;
+// These should match the values in your .env or .env.local for client-side use
+const CLIENT_SIDE_PRODUCTION_ROOT_DOMAIN = ("TURBOPACK compile-time value", "mysuper-saas.com") || 'mysuper-saas.com';
+const CLIENT_SIDE_DEV_ROOT_DOMAIN = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_ROOT_DOMAIN || 'localhost:3000';
+const NEXT_PUBLIC_APP_NAME = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_APP_NAME || 'MySuperSaaS';
 function SelectTenantForm() {
     _s();
-    const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])(); // For reading error query params
-    const [subdomain, setSubdomain] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
+    const [subdomainInput, setSubdomainInput] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [errorMessage, setErrorMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [currentHostHint, setCurrentHostHint] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
+    const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false); // Added loading state
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "SelectTenantForm.useEffect": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                const winHostname = window.location.hostname.toLowerCase();
+                if (winHostname === 'localhost' || winHostname.startsWith('127.0.0.1')) {
+                    setCurrentHostHint(CLIENT_SIDE_DEV_ROOT_DOMAIN.replace(/^http(s?):\/\//, ''));
+                } else {
+                    setCurrentHostHint(CLIENT_SIDE_PRODUCTION_ROOT_DOMAIN);
+                }
+            }
             const error = searchParams.get('error');
             const attempted = searchParams.get('attempted');
             let msg = null;
@@ -32,43 +46,21 @@ function SelectTenantForm() {
                 case 'unknown_tenant':
                     msg = `The organization '${attempted || 'address'}' was not found. Please check the name or contact support.`;
                     break;
+                case 'unrecognized_host':
+                    msg = 'The web address you used is not recognized. Please enter your organization\'s address below.';
+                    break;
+                case 'root_access_needs_selection':
+                    msg = 'Please enter your organization\'s address to continue.';
+                    break;
                 case 'missing_host':
                     msg = 'There was an issue determining your organization. Please try entering its address.';
                     break;
-                case 'unrecognized_host':
-                    msg = 'The web address you used is not recognized. Please enter your organization\'s address.';
-                    break;
-                case 'tenant_required_for_client_dashboard':
-                case 'tenant_required_for_customer_dashboard':
-                case 'tenant_required_for_supplier_dashboard':
-                    msg = 'Access to that dashboard requires an organization address. Please enter it below.';
-                    break;
-                case 'tenant_db_not_found':
-                case 'tenant_on_root_not_found':
-                case 'tenant_not_found_client_dashboard':
-                case 'tenant_not_found_customer_dashboard':
-                case 'tenant_not_found_supplier_dashboard':
-                    msg = `We couldn't find an organization with the address '${attempted || 'provided'}'. Please check and try again.`;
-                    break;
-                case 'incorrect_tenant_type_for_client_dashboard':
-                case 'incorrect_tenant_type_for_customer_dashboard':
-                case 'incorrect_tenant_type_for_supplier_dashboard':
-                    msg = `The organization '${attempted || 'address'}' is not the correct type for that dashboard.`;
-                    break;
-                case 'db_error':
-                case 'db_error_client_dashboard':
-                case 'db_error_customer_dashboard':
-                case 'db_error_supplier_dashboard':
-                    msg = 'We encountered a problem looking up your organization. Please try again shortly.';
-                    break;
-                case 'middleware_fallback':
-                case 'root_page_direct_access':
-                case 'root_page_unhandled':
-                    msg = 'Please select or enter your organization address.';
+                case 'middleware_unhandled':
+                    msg = 'An unexpected error occurred. Please try entering your organization\'s address or contact support.';
                     break;
                 default:
                     if (error) {
-                        msg = 'An unexpected issue occurred. Please try entering your organization address.';
+                        msg = `An issue occurred (${error}). Please try entering your organization address.`;
                     }
             }
             setErrorMessage(msg);
@@ -76,85 +68,80 @@ function SelectTenantForm() {
     }["SelectTenantForm.useEffect"], [
         searchParams
     ]);
-    // src/components/auth/SelectTenantForm.tsx - handleSubmit
     const handleSubmit = (e)=>{
         e.preventDefault();
-        const trimmedSubdomain = subdomain.trim().toLowerCase();
-        if (trimmedSubdomain) {
-            if ("TURBOPACK compile-time falsy", 0) {
-                "TURBOPACK unreachable";
-            }
-            let targetHost;
-            let protocol = 'http:'; // Default to HTTP for local/dev
-            // Check if the main access point is localhost via port forwarding
-            // This condition might need adjustment based on how you access your Cloud Workstation's forwarded port
-            const isEffectivelyLocalhost = window.location.hostname === 'localhost' || window.location.port === '3000' || // Or whatever port you forward to locally
-            window.location.hostname.startsWith('127.0.0.1');
-            if (isEffectivelyLocalhost) {
-                targetHost = `${trimmedSubdomain}.localhost:3000`;
-                protocol = 'http:';
-            } else if (window.location.hostname.includes('cloudworkstations.dev')) {
-                // If HSTS is blocking HTTP on cloudworkstations.dev subdomains, this path is problematic.
-                // We are trying to force HTTP, but HSTS might prevent it.
-                // For Cloud Workstations with HSTS, direct subdomain testing becomes very hard without a proxy.
-                // Reverting to using the main Cloud Workstation URL + path-based tenancy for dev on Cloud Workstations might be easier.
-                console.warn("Attempting HTTP redirect on Cloud Workstation for subdomain, HSTS might interfere.");
-                targetHost = `${trimmedSubdomain}.${window.location.host}`;
-                protocol = 'http:';
-            } else {
-                // Production logic
-                const productionDomainEnv = ("TURBOPACK compile-time value", "mysuper-saas.com");
-                if (productionDomainEnv && window.location.hostname.endsWith(productionDomainEnv)) {
-                    targetHost = `${trimmedSubdomain}.${productionDomainEnv}`;
-                } else {
-                    // Fallback for other production scenarios or if NEXT_PUBLIC_PRODUCTION_DOMAIN isn't set
-                    // This might still try to use the full Vercel URL etc.
-                    targetHost = `${trimmedSubdomain}.${window.location.host}`;
-                }
-                protocol = 'https:'; // Production should be HTTPS
-            }
-            console.log(`Redirecting to: ${protocol}//${targetHost}`);
-            window.location.href = `${protocol}//${targetHost}`;
-        } else {
-            setErrorMessage("Please enter your organization's address (e.g., 'acme').");
+        setIsLoading(true); // Set loading true
+        const trimmedSubdomain = subdomainInput.trim().toLowerCase();
+        if (!trimmedSubdomain) {
+            setErrorMessage("Please enter your organization's address (e.g., 'acme', 'supplier').");
+            setIsLoading(false);
+            return;
         }
+        if (trimmedSubdomain.includes('.') || trimmedSubdomain.includes('/')) {
+            setErrorMessage("Organization address should only contain letters, numbers, or hyphens (e.g., 'acme-inc').");
+            setIsLoading(false);
+            return;
+        }
+        setErrorMessage(null);
+        if ("TURBOPACK compile-time falsy", 0) {
+            "TURBOPACK unreachable";
+        }
+        let targetHostWithSubdomain;
+        let protocol;
+        const currentWindowLocation = window.location;
+        const winHostname = currentWindowLocation.hostname.toLowerCase();
+        const isLocalDevelopment = winHostname === 'localhost' || winHostname.startsWith('127.0.0.1');
+        if (isLocalDevelopment) {
+            const devRootHostAndPort = CLIENT_SIDE_DEV_ROOT_DOMAIN.replace(/^http(s?):\/\//, '');
+            targetHostWithSubdomain = `${trimmedSubdomain}.${devRootHostAndPort}`;
+            protocol = currentWindowLocation.protocol;
+        } else {
+            targetHostWithSubdomain = `${trimmedSubdomain}.${CLIENT_SIDE_PRODUCTION_ROOT_DOMAIN}`;
+            protocol = 'https:';
+        }
+        const redirectUrl = `${protocol}//${targetHostWithSubdomain}/`;
+        console.log(`SelectTenantForm: Attempting to redirect to: ${redirectUrl}`);
+        window.location.href = redirectUrl;
+    // setIsLoading(false); // No need to set false if navigating away, but good if there was an API call here that could fail
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-center",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
                 className: "mx-auto h-12 w-auto",
-                src: "https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" // Replace with your actual logo
-                ,
-                alt: "SAASPro Logo"
+                src: "/logo.svg",
+                alt: `${NEXT_PUBLIC_APP_NAME} Logo`
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 111,
+                lineNumber: 103,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                 className: "text-3xl font-bold text-gray-800 mt-4",
-                children: "Welcome to SAASPro"
-            }, void 0, false, {
+                children: [
+                    "Welcome to ",
+                    NEXT_PUBLIC_APP_NAME
+                ]
+            }, void 0, true, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 116,
+                lineNumber: 108,
                 columnNumber: 13
             }, this),
-            " ",
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                 className: "text-gray-600",
-                children: "Please enter your organization's unique address to continue."
+                children: "Please enter your organization's address to continue."
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 117,
+                lineNumber: 109,
                 columnNumber: 13
             }, this),
-            errorMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                className: "text-sm text-red-600 bg-red-50 p-3 rounded-md border border-red-200",
+            errorMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                role: "alert",
+                className: "text-sm text-red-700 bg-red-100 p-3 my-4 rounded-md border border-red-300",
                 children: errorMessage
             }, void 0, false, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 122,
+                lineNumber: 114,
                 columnNumber: 17
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -169,7 +156,7 @@ function SelectTenantForm() {
                                 children: "Organization Address"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                                lineNumber: 127,
+                                lineNumber: 121,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -179,54 +166,59 @@ function SelectTenantForm() {
                                         id: "subdomain",
                                         name: "subdomain",
                                         type: "text",
+                                        autoComplete: "off",
                                         required: true,
-                                        className: "appearance-none rounded-l-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm",
-                                        placeholder: "your-organization",
-                                        value: subdomain,
-                                        onChange: (e)=>setSubdomain(e.target.value),
+                                        disabled: isLoading,
+                                        className: "appearance-none rounded-l-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm disabled:bg-gray-100",
+                                        placeholder: "e.g., acme, supplier",
+                                        value: subdomainInput,
+                                        onChange: (e)=>setSubdomainInput(e.target.value),
                                         autoCapitalize: "none",
-                                        spellCheck: "false"
+                                        spellCheck: "false",
+                                        "aria-describedby": "subdomain-hint"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                                        lineNumber: 131,
+                                        lineNumber: 125,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "inline-flex items-center h-[46px] px-3 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md",
+                                        id: "subdomain-hint",
+                                        className: "inline-flex items-center h-[46px] px-3 border-y border-r border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md whitespace-nowrap",
                                         children: [
                                             ".",
-                                            "object" !== 'undefined' && window.location.hostname === 'localhost' ? 'localhost:3000' : (("TURBOPACK compile-time value", "mysuper-saas.com") || 'saaspro.com').split(':')[0]
+                                            currentHostHint
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                                        lineNumber: 143,
+                                        lineNumber: 140,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                                lineNumber: 130,
+                                lineNumber: 124,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                        lineNumber: 126,
+                        lineNumber: 120,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "submit",
-                        className: "group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                        children: "Access My Organization"
+                        disabled: isLoading,
+                        className: "group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed",
+                        children: isLoading ? 'Processing...' : 'Access My Organization'
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                        lineNumber: 154,
+                        lineNumber: 149,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 125,
+                lineNumber: 119,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -234,37 +226,40 @@ function SelectTenantForm() {
                 children: [
                     "Example: If your address is ",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                        className: "bg-gray-200 p-1 rounded",
-                        children: "acme.saaspro.com"
-                    }, void 0, false, {
+                        className: "bg-gray-200 p-1 rounded text-xs",
+                        children: [
+                            "acme.",
+                            currentHostHint.split(':')[0]
+                        ]
+                    }, void 0, true, {
                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                        lineNumber: 162,
+                        lineNumber: 158,
                         columnNumber: 45
                     }, this),
                     ", enter ",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                        className: "bg-gray-200 p-1 rounded",
+                        className: "bg-gray-200 p-1 rounded text-xs",
                         children: "acme"
                     }, void 0, false, {
                         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                        lineNumber: 162,
-                        columnNumber: 118
+                        lineNumber: 158,
+                        columnNumber: 146
                     }, this),
                     "."
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-                lineNumber: 161,
+                lineNumber: 157,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/auth/SelectTenantForm.tsx",
-        lineNumber: 110,
+        lineNumber: 102,
         columnNumber: 9
     }, this);
 }
-_s(SelectTenantForm, "YgkDOidfJzwadtUGcfj2caQYOTE=", false, function() {
+_s(SelectTenantForm, "A/BHp9Jg1V1H6NhlU2ZGkAgaA1k=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"]
     ];

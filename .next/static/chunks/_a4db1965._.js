@@ -5,17 +5,19 @@
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
-// src/components/auth/SelectTenantLoader.tsx
+// C:\Users\user\Documents\saas\src\components\auth\SelectTenantLoader.tsx
 __turbopack_context__.s({
     "default": (()=>SelectTenantLoader)
 });
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/build/polyfills/process.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$shared$2f$lib$2f$app$2d$dynamic$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/shared/lib/app-dynamic.js [app-client] (ecmascript)");
 ;
-"use client"; // This component MUST be a client component
+"use client";
 ;
 ;
-// Dynamically import the form component, disabling SSR for it.
+// Dynamically import the SelectTenantForm component, disabling SSR for it.
+// SSR is disabled because SelectTenantForm uses useSearchParams, a client-side hook.
 const SelectTenantFormComponent = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$shared$2f$lib$2f$app$2d$dynamic$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"])(()=>__turbopack_context__.r("[project]/src/components/auth/SelectTenantForm.tsx [app-client] (ecmascript, next/dynamic entry, async loader)")(__turbopack_context__.i), {
     loadableGenerated: {
         modules: [
@@ -23,30 +25,81 @@ const SelectTenantFormComponent = (0, __TURBOPACK__imported__module__$5b$project
         ]
     },
     ssr: false,
-    loading: ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "flex items-center justify-center min-h-[200px] w-full max-w-md p-8",
+    loading: ()=>// Basic loading UI, can be customized further
+        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4",
             children: [
-                " ",
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                    className: "text-gray-500",
-                    children: "Loading form..."
-                }, void 0, false, {
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                    className: "w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md text-center",
+                    children: [
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("img", {
+                            className: "mx-auto h-12 w-auto animate-pulse" // Simple pulse animation
+                            ,
+                            src: "/logo.svg" // Assuming logo.svg is in your public folder
+                            ,
+                            alt: "Loading..."
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
+                            lineNumber: 17,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                            className: "text-2xl font-bold text-gray-700 mt-4",
+                            children: "Loading Organization Selector"
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
+                            lineNumber: 22,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                            className: "text-gray-500",
+                            children: "Please wait a moment..."
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
+                            lineNumber: 23,
+                            columnNumber: 21
+                        }, this),
+                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "mt-6 w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-500 mx-auto"
+                        }, void 0, false, {
+                            fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
+                            lineNumber: 25,
+                            columnNumber: 21
+                        }, this)
+                    ]
+                }, void 0, true, {
                     fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
-                    lineNumber: 14,
+                    lineNumber: 16,
+                    columnNumber: 17
+                }, this),
+                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
+                    className: "absolute bottom-4 text-center w-full text-xs text-gray-500",
+                    children: [
+                        "© ",
+                        new Date().getFullYear(),
+                        " ",
+                        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_APP_NAME || "MySuperSaaS",
+                        ". Loading..."
+                    ]
+                }, void 0, true, {
+                    fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
+                    lineNumber: 28,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
-            lineNumber: 13,
+            lineNumber: 15,
             columnNumber: 13
         }, this)
 });
 _c = SelectTenantFormComponent;
 function SelectTenantLoader() {
+    // No props are passed to SelectTenantFormComponent, which is correct
+    // because SelectTenantForm itself does not (and should not) expect them.
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(SelectTenantFormComponent, {}, void 0, false, {
         fileName: "[project]/src/components/auth/SelectTenantLoader.tsx",
-        lineNumber: 21,
+        lineNumber: 39,
         columnNumber: 12
     }, this);
 }
