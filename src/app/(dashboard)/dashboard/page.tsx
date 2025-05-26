@@ -6,10 +6,12 @@ import prisma from '@/lib/prisma'; // Ensure this path is correct
 import type { Tenant } from '@prisma/client'; // Ensure this path is correct
 import { getDynamicProtocol, getDynamicRootDomain, getHostnameWithoutPort } from '@/lib/domainUtils'; // Ensure this path is correct
 
-// Import the client layout component
-import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient'; // Adjust path as needed
+// Import all dashboard layout components
+import DashboardLayoutClient from '@/components/dashboard/DashboardLayoutClient';
+import DashboardLayoutCustomer from '@/components/dashboard/DashboardLayoutCustomer';
+import DashboardLayoutSupplier from '@/components/dashboard/DashboardLayoutSupplier';
 
-// Placeholder components for different tenant dashboards (content for the "Overview" section)
+// Placeholder components for different tenant dashboards (content for the "Overview" or "Dashboard" section)
 // These now include their own headers as part of their content.
 const SupplierDashboardContent = ({ tenant }: { tenant: Tenant }) => (
     <>
@@ -89,7 +91,7 @@ const DefaultDashboardContent = ({ tenant }: { tenant: Tenant }) => (
         </header>
         <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold text-gray-700 mb-2">Welcome!</h2>
-            <p className="text-gray-600 text-sm">No specific dashboard view configured for this tenant type ({tenant.tenant_type}).</p>
+            <p className="text-gray-600 text-sm">No specific dashboard view configured for this tenant type ({tenant.tenant_type}). Using default layout.</p>
         </div>
     </>
 );
@@ -98,8 +100,8 @@ const DefaultDashboardContent = ({ tenant }: { tenant: Tenant }) => (
 export default async function DashboardPage() {
     console.log('[DASHBOARD PAGE SERVER COMPONENT] Rendering...');
 
-    const headerList = await headers(); // Renamed for clarity
-    const tenantSubdomain = headerList.get('x-tenant-id'); // Use clear variable name
+    const headerList = await headers();
+    const tenantSubdomain = headerList.get('x-tenant-id');
 
     // --- AUTHENTICATION CHECK (CRUCIAL - Placeholder) ---
     // const user = await getCurrentUser(); // Implement this
@@ -107,7 +109,6 @@ export default async function DashboardPage() {
     //   console.log('[DASHBOARD] No active session. Redirecting to login.');
     //   const protocol = getDynamicProtocol();
     //   const currentHostname = getHostnameWithoutPort(headerList.get('host') || '');
-    //   // Ensure login path is correct for your app, might be on root domain or current subdomain
     //   return redirect(`${protocol}://${currentHostname}/login?redirectTo=${encodeURIComponent('/dashboard')}`);
     // }
     // ---
@@ -147,30 +148,41 @@ export default async function DashboardPage() {
     // }
     // ---
 
-    let initialDashboardContentNode = null;
     // Use toLowerCase() for case-insensitive matching of tenant_type
     switch (tenant.tenant_type.toLowerCase()) {
         case 'supplier':
-            initialDashboardContentNode = <SupplierDashboardContent tenant={tenant} />;
-            break;
+            return (
+                <DashboardLayoutSupplier
+                    tenant={tenant}
+                    initialDashboardContent={<SupplierDashboardContent tenant={tenant} />}
+                    // user={user} // Pass user if available and needed by the layout
+                />
+            );
         case 'client':
-            initialDashboardContentNode = <ClientDashboardContent tenant={tenant} />;
-            break;
+            return (
+                <DashboardLayoutClient
+                    tenant={tenant}
+                    initialDashboardContent={<ClientDashboardContent tenant={tenant} />}
+                    // user={user}
+                />
+            );
         case 'customer':
-            initialDashboardContentNode = <CustomerDashboardContent tenant={tenant} />;
-            break;
+            return (
+                <DashboardLayoutCustomer
+                    tenant={tenant}
+                    initialDashboardContent={<CustomerDashboardContent tenant={tenant} />}
+                    // user={user}
+                />
+            );
         default:
-            console.warn(`[DASHBOARD] Unsupported tenant_type: ${tenant.tenant_type} for tenant ${tenant.name}. Showing default.`);
-            initialDashboardContentNode = <DefaultDashboardContent tenant={tenant} />;
+            console.warn(`[DASHBOARD] Unsupported tenant_type: ${tenant.tenant_type} for tenant ${tenant.name}. Showing default content with Client layout.`);
+            // Fallback to DashboardLayoutClient with DefaultDashboardContent
+            return (
+                <DashboardLayoutClient
+                    tenant={tenant}
+                    initialDashboardContent={<DefaultDashboardContent tenant={tenant} />}
+                    // user={user}
+                />
+            );
     }
-
-    // Render the client layout component, passing tenant data and the specific dashboard content
-    return (
-        <DashboardLayoutClient
-            tenant={tenant}
-            initialDashboardContent={initialDashboardContentNode}
-            // Pass other necessary props like user object if available:
-            // user={user}
-        />
-    );
 }

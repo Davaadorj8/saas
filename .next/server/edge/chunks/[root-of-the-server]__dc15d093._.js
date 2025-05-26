@@ -21,7 +21,7 @@ module.exports = mod;
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-// C:\Users\user\Documents\saas\src\middleware.ts)
+// C:\Users\user\Documents\saas\src\middleware.ts
 __turbopack_context__.s({
     "config": (()=>config),
     "middleware": (()=>middleware)
@@ -29,7 +29,7 @@ __turbopack_context__.s({
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$api$2f$server$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__$3c$module__evaluation$3e$__ = __turbopack_context__.i("[project]/node_modules/next/dist/esm/api/server.js [middleware-edge] (ecmascript) <module evaluation>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/esm/server/web/spec-extension/response.js [middleware-edge] (ecmascript)");
 ;
-// --- (Keep ENV CONFIG, SETTINGS constants, HELPERS as before) ---
+// --- Configuration Constants ---
 const NEXT_PUBLIC_PRODUCTION_ROOT_DOMAIN_FOR_CLIENT = ("TURBOPACK compile-time value", "mysuper-saas.com") || 'mysuper-saas.com';
 let SERVER_ROOT_DOMAIN;
 if (process.env.APP_ENV === 'production' || ("TURBOPACK compile-time value", "development") === 'production') {
@@ -43,7 +43,9 @@ const PUBLIC_PATHS = [
     '/pricing',
     '/terms',
     '/privacy',
-    '/favicon.ico'
+    '/favicon.ico',
+    '/robots.txt',
+    '/sitemap.xml'
 ];
 const TENANT_SELECTION_PATH = '/select-tenant';
 const AUTH_API_PREFIX = '/api/auth';
@@ -65,11 +67,18 @@ const RESERVED_SUBDOMAINS = [
     'assets',
     'static',
     'internal',
-    '_next'
+    '_next',
+    'admin',
+    'support',
+    'billing',
+    'shop',
+    'test' // Added 'test' just in case
 ];
+// --- Helper Functions ---
 const getHostnameWithoutPort = (hostHeaderOrDomain)=>{
     try {
-        const url = new URL(hostHeaderOrDomain.startsWith('http') ? hostHeaderOrDomain : `http://${hostHeaderOrDomain}`);
+        const fullUrl = hostHeaderOrDomain.startsWith('http') ? hostHeaderOrDomain : `http://${hostHeaderOrDomain}`;
+        const url = new URL(fullUrl);
         return url.hostname.toLowerCase();
     } catch (e) {
         return hostHeaderOrDomain.split(':')[0].toLowerCase();
@@ -77,119 +86,133 @@ const getHostnameWithoutPort = (hostHeaderOrDomain)=>{
 };
 const config = {
     matcher: [
-        '/((?!_next/static|_next/image|.*\\..*).*)'
+        '/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|manifest.json|images/|icons/|assets/).*)'
     ]
 };
 async function middleware(request) {
     const url = request.nextUrl.clone();
-    const { pathname } = url;
+    const originalPathname = request.nextUrl.pathname; // Use this for checks against original request
     const hostHeader = request.headers.get('host') || SERVER_ROOT_DOMAIN;
-    console.log(`\n--- [MW RUN] Request: ${request.method} ${hostHeader}${pathname} ---`);
-    // 1. Early bypass for truly public static assets and Next.js internals
-    //    These should never have tenant context.
-    if (pathname.startsWith('/_next/') || PUBLIC_FILE_EXTENSIONS.test(pathname) || // All files with extensions
-    PUBLIC_PATHS.includes(pathname) // Explicitly defined public HTML pages
-    ) {
-        console.log(`[MW BYPASS - STATIC/PUBLIC] Path: ${pathname}`);
+    console.log(`\n--- [MW RUN] Request: ${request.method} ${hostHeader}${originalPathname} ---`);
+    if (originalPathname.startsWith('/_next/') || PUBLIC_FILE_EXTENSIONS.test(originalPathname) || PUBLIC_PATHS.includes(originalPathname)) {
+        console.log(`[MW BYPASS - STATIC/PUBLIC] Path: "${originalPathname}"`);
         return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next();
     }
-    // 2. Host parsing and subdomain identification
     const currentHostname = getHostnameWithoutPort(hostHeader);
     const serverRootHostname = getHostnameWithoutPort(SERVER_ROOT_DOMAIN);
     let identifiedSubdomain = null;
     let isRootAccess = false;
-    console.log(`[MW PARSE] currentHostname: ${currentHostname}, serverRootHostname: ${serverRootHostname}`);
+    console.log(`[MW PARSE] currentHostname: "${currentHostname}", serverRootHostname: "${serverRootHostname}"`);
     if (currentHostname === serverRootHostname || currentHostname === `www.${serverRootHostname}`) {
         isRootAccess = true;
-        console.log(`[MW DETECT] Root access on: ${currentHostname}`);
+        console.log(`[MW DETECT] Root domain access on: "${currentHostname}"`);
     } else if (currentHostname.endsWith(`.${serverRootHostname}`)) {
         const potentialSubdomain = currentHostname.substring(0, currentHostname.length - serverRootHostname.length - 1);
-        if (potentialSubdomain && !RESERVED_SUBDOMAINS.includes(potentialSubdomain)) {
-            identifiedSubdomain = potentialSubdomain;
-            console.log(`[MW DETECT] Identified subdomain: ${identifiedSubdomain}`);
+        if (potentialSubdomain && !RESERVED_SUBDOMAINS.includes(potentialSubdomain.toLowerCase())) {
+            identifiedSubdomain = potentialSubdomain.toLowerCase();
+            console.log(`[MW DETECT] Identified subdomain: "${identifiedSubdomain}"`);
         } else {
             isRootAccess = true;
-            console.log(`[MW DETECT] Reserved subdomain or www, treating as root: ${currentHostname}`);
+            console.log(`[MW DETECT] Reserved or empty subdomain, treating as root: "${currentHostname}"`);
         }
     } else {
-        console.warn(`[MW UNRECOGNIZED HOST] Host: ${currentHostname}. Redirecting to selection.`);
-        return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'unrecognized_host', currentHostname);
+        console.warn(`[MW UNRECOGNIZED HOST] Host: "${currentHostname}". Redirecting to selection page on root domain.`);
+        return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'unrecognized_host_format', currentHostname);
     }
-    // 3. Routing Logic
+    const responseHeaders = new Headers(request.headers);
     if (identifiedSubdomain) {
-        // --- SUBDOMAIN ACCESS ---
-        console.log(`[MW SUBDOMAIN] Subdomain: "${identifiedSubdomain}", Path: "${pathname}"`);
+        console.log(`[MW SUBDOMAIN] Access for subdomain: "${identifiedSubdomain}", Original Path: "${originalPathname}"`);
+        responseHeaders.set('x-tenant-id', identifiedSubdomain);
         if (VALID_TENANT_SUBDOMAINS.includes(identifiedSubdomain)) {
-            const requestHeaders = new Headers(request.headers);
-            requestHeaders.set('x-tenant-id', identifiedSubdomain);
-            console.log(`[MW SUBDOMAIN] Valid tenant. Set x-tenant-id: "${identifiedSubdomain}"`);
-            // If it's an auth API call on a subdomain, let it pass with the header.
-            if (pathname.startsWith(AUTH_API_PREFIX)) {
-                console.log(`[MW SUBDOMAIN] Allowing AUTH API path "${pathname}" with header.`);
+            console.log(`[MW SUBDOMAIN] Valid tenant subdomain. x-tenant-id: "${identifiedSubdomain}" set.`);
+            if (originalPathname.startsWith('/api/')) {
+                console.log(`[MW SUBDOMAIN] API route "${originalPathname}". Passing through with tenant header (no rewrite).`);
                 return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next({
                     request: {
-                        headers: requestHeaders
+                        headers: responseHeaders
                     }
                 });
             }
-            // For pages on the subdomain:
-            if (pathname === '/') {
-                const loginUrl = new URL(LOGIN_PATH, url);
-                console.log(`[MW SUBDOMAIN] Root of subdomain. Redirecting to login: ${loginUrl.href}`);
-                return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(loginUrl, {
-                    headers: requestHeaders
+            // --- FIXED PATH HANDLING ---
+            const tenantBasePath = `/${identifiedSubdomain}`; // e.g., /supplier
+            let newInternalPath;
+            if (originalPathname.startsWith(tenantBasePath)) {
+                // Path already includes the subdomain prefix (e.g., /supplier/login was directly requested)
+                newInternalPath = originalPathname;
+                console.log(`[MW SUBDOMAIN] Path "${originalPathname}" already tenant-prefixed. Using as internal path: "${newInternalPath}"`);
+            } else {
+                // Path does not include subdomain prefix (e.g., /dashboard was requested on supplier.domain.com), so prepend it
+                newInternalPath = `${tenantBasePath}${originalPathname === '/' ? '' : originalPathname}`;
+                console.log(`[MW SUBDOMAIN] Path "${originalPathname}" not tenant-prefixed. Prepending to: "${newInternalPath}"`);
+            }
+            // Update the cloned URL with the correctly determined internal path
+            url.pathname = newInternalPath;
+            // If the original request (from the browser) was for the root of the subdomain (e.g., supplier.localhost:3000/),
+            // then redirect the BROWSER to the tenant-specific login page.
+            if (originalPathname === '/') {
+                const tenantLoginPath = `${tenantBasePath}${LOGIN_PATH}`; // e.g., /supplier/login
+                url.pathname = tenantLoginPath; // Ensure the redirect URL target is correct
+                console.log(`[MW SUBDOMAIN] Original path was root ("/"). Redirecting BROWSER to tenant login: "${url.pathname}"`);
+                return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(url, {
+                    headers: responseHeaders
                 });
             }
-            // Allow other page requests on this subdomain to proceed with the header
-            console.log(`[MW SUBDOMAIN] Allowing page path "${pathname}" with header.`);
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next({
-                request: {
-                    headers: requestHeaders
-                }
+            // For all other page requests on this valid tenant subdomain (e.g., /supplier/login after redirect, or /supplier/dashboard),
+            // rewrite the path internally. The browser URL does not change.
+            // Next.js will serve content from /app/<subdomain_directory>/<path_segment>
+            console.log(`[MW SUBDOMAIN] Rewriting for original path "${originalPathname}" to internal path: "${url.pathname}"`);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].rewrite(url, {
+                headers: responseHeaders
             });
+        // --- END FIXED PATH HANDLING ---
         } else {
-            // Invalid tenant subdomain
-            console.warn(`[MW SUBDOMAIN] Unknown tenant subdomain: "${identifiedSubdomain}". Redirecting to selection.`);
-            return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'unknown_tenant', identifiedSubdomain);
+            console.warn(`[MW SUBDOMAIN] Unknown or invalid tenant subdomain: "${identifiedSubdomain}". Redirecting to selection.`);
+            return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'unknown_tenant_subdomain', identifiedSubdomain);
         }
     } else if (isRootAccess) {
-        // --- ROOT DOMAIN ACCESS ---
-        console.log(`[MW ROOT] Root domain access. Path: "${pathname}"`);
-        // Allow AUTH API calls on the root domain if needed (e.g., for a global "forgot password" or super-admin)
-        // If all auth actions MUST be tenant-specific, you might remove this or make it more specific.
-        if (pathname.startsWith(AUTH_API_PREFIX)) {
-            console.log(`[MW ROOT] Allowing AUTH API path "${pathname}" on root domain (no tenant header).`);
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next(); // No tenant header for root domain API calls
+        console.log(`[MW ROOT] Root domain access. Path: "${originalPathname}"`);
+        responseHeaders.delete('x-tenant-id');
+        if (originalPathname.startsWith('/api/')) {
+            console.log(`[MW ROOT] API route "${originalPathname}" on root. Passing through.`);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next({
+                request: {
+                    headers: responseHeaders
+                }
+            });
         }
-        // For any other path on the root domain that isn't the tenant selection page, redirect.
-        if (pathname !== TENANT_SELECTION_PATH) {
-            console.log(`[MW ROOT] Path "${pathname}" is not select-tenant. Redirecting to select-tenant.`);
-            return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'root_access_needs_selection', pathname);
+        if (originalPathname === TENANT_SELECTION_PATH || originalPathname === LOGIN_PATH) {
+            console.log(`[MW ROOT] Allowing access to "${originalPathname}" on root domain.`);
+            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next({
+                request: {
+                    headers: responseHeaders
+                }
+            });
         }
-        // Allow access to the tenant selection page itself on the root domain
-        console.log(`[MW ROOT] Allowing path "${TENANT_SELECTION_PATH}" on root domain.`);
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].next();
+        console.log(`[MW ROOT] Path "${originalPathname}" requires tenant selection. Redirecting.`);
+        return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'root_needs_selection', originalPathname);
     }
-    // Fallback (should ideally not be reached)
-    console.warn(`[MW FALLBACK] Unhandled case. Host: "${currentHostname}", Path: "${pathname}". Redirecting to selection.`);
-    return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'middleware_unhandled', currentHostname);
+    console.warn(`[MW FALLBACK] Unhandled routing case. Host: "${currentHostname}", Path: "${originalPathname}". Redirecting to selection.`);
+    return redirectToSelectionPage(request, SERVER_ROOT_DOMAIN, 'middleware_unhandled_case', currentHostname);
 }
-// --- REDIRECT HELPER to TENANT_SELECTION_PATH on ROOT_DOMAIN ---
-// (redirectToSelectionPage function remains the same as the last version)
-function redirectToSelectionPage(request, serverRootDomainForRedirect, errorReason, attemptedValue) {
+function redirectToSelectionPage(request, rootDomainForRedirect, errorReason, attemptedValue) {
     const selectionUrl = new URL(request.nextUrl.origin);
-    selectionUrl.hostname = getHostnameWithoutPort(serverRootDomainForRedirect);
-    const rootDomainPort = serverRootDomainForRedirect.split(':')[1];
-    if (rootDomainPort) selectionUrl.port = rootDomainPort;
-    else selectionUrl.port = '';
+    selectionUrl.hostname = getHostnameWithoutPort(rootDomainForRedirect);
+    const rootDomainParts = rootDomainForRedirect.split(':');
+    if (rootDomainParts.length > 1 && rootDomainParts[1]) {
+        selectionUrl.port = rootDomainParts[1];
+    } else {
+        selectionUrl.port = '';
+    }
     selectionUrl.pathname = TENANT_SELECTION_PATH;
     selectionUrl.searchParams.set('error', errorReason);
-    if (attemptedValue) selectionUrl.searchParams.set('attempted', attemptedValue);
+    if (attemptedValue) {
+        selectionUrl.searchParams.set('attempted', attemptedValue);
+    }
     const fromParam = request.nextUrl.searchParams.get('from');
-    if (fromParam && errorReason !== 'root_access_needs_selection') {
+    if (fromParam && errorReason !== 'root_needs_selection') {
         selectionUrl.searchParams.set('from', fromParam);
     }
-    console.log(`[MW REDIRECT HELPER] Redirecting to: ${selectionUrl.href} (Reason: ${errorReason})`);
+    console.log(`[MW REDIRECT HELPER] Redirecting to: "${selectionUrl.href}" (Reason: ${errorReason})`);
     return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(selectionUrl);
 }
 }}),

@@ -1,7 +1,12 @@
 {
-  "/(auth)/login/page": "app/(auth)/login/page.js",
-  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
   "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/login/route": "app/api/auth/login/route.js",
-  "/select-tenant/page": "app/select-tenant/page.js"
+  "/client/dashboard/page": "app/client/dashboard/page.js",
+  "/client/login/page": "app/client/login/page.js",
+  "/customer/dashboard/page": "app/customer/dashboard/page.js",
+  "/customer/login/page": "app/customer/login/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/select-tenant/page": "app/select-tenant/page.js",
+  "/supplier/dashboard/page": "app/supplier/dashboard/page.js",
+  "/supplier/login/page": "app/supplier/login/page.js"
 }
