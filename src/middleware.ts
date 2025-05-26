@@ -1,4 +1,4 @@
-// C:\Users\user\Documents\saas\middleware.ts (or src\middleware.ts)
+// C:\Users\user\Documents\saas\src\middleware.ts)
 import { NextRequest, NextResponse } from 'next/server';
 
 // --- (Keep ENV CONFIG, SETTINGS constants, HELPERS as before) ---

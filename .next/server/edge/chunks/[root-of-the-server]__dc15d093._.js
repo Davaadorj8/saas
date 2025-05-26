@@ -21,7 +21,7 @@ module.exports = mod;
 
 var { g: global, __dirname } = __turbopack_context__;
 {
-// C:\Users\user\Documents\saas\middleware.ts (or src\middleware.ts)
+// C:\Users\user\Documents\saas\src\middleware.ts)
 __turbopack_context__.s({
     "config": (()=>config),
     "middleware": (()=>middleware)

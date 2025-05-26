@@ -9,14 +9,19 @@ const registerUserSchema = z.object({
     name: z.string()
         .min(2, { message: "Name must be at least 2 characters." })
         .max(100, { message: "Name must be 100 characters or less." })
-        .trim(), // Add trim for good measure
+        .trim(),
     email: z.string()
         .email({ message: "Invalid email address." })
-        .toLowerCase(), // Process email as lowercase
+        .toLowerCase(),
     password: z.string()
         .min(8, { message: "Password must be at least 8 characters long." }),
-    tenantContext: z.string().optional(), // Sent from client, can be used for logging/verification if needed
-                                          // but x-tenant-id header is primary source of truth for tenant.
+    phoneNumber: z.string()
+        .min(7, { message: "Phone number seems too short."}) // Basic min length validation
+        .max(20, { message: "Phone number seems too long."}) // Basic max length validation
+        .regex(/^\+?[0-9\s-()]*$/, { message: "Invalid characters in phone number."}) // Basic character validation
+        .optional() // Make it optional
+        .or(z.literal('')), // Allow empty string, then we can treat it as null/undefined
+    tenantContext: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -29,7 +34,7 @@ export async function POST(request: NextRequest) {
             console.error("[API /api/auth/register] Error: Tenant information (x-tenant-id header) is missing.");
             return NextResponse.json(
                 { success: false, message: "Tenant information is missing. Registration cannot proceed." },
-                { status: 400 } // Bad Request: Missing critical header for context
+                { status: 400 }
             );
         }
 
@@ -52,18 +57,14 @@ export async function POST(request: NextRequest) {
                     message: "Validation failed. Please check the provided data.",
                     errors: validationResult.error.flatten().fieldErrors,
                 },
-                { status: 400 } // Bad Request: Validation errors
+                { status: 400 }
             );
         }
 
-        // Note: validationResult.data.email will be lowercase due to .toLowerCase() in schema
-        const { name, email, password } = validationResult.data;
-        // const tenantContextFromBody = validationResult.data.tenantContext; // Available if needed
+        const { name, email, password, phoneNumber } = validationResult.data;
+        // Prepare phoneNumber: store null if it's an empty string or undefined.
+        const sanitizedPhoneNumber = (phoneNumber && phoneNumber.trim() !== '') ? phoneNumber.trim() : null;
 
-        // Optional: Verify tenantContextFromBody matches tenantSubdomainFromHeader if both are present
-        // if (tenantContextFromBody && tenantContextFromBody !== tenantSubdomainFromHeader) {
-        //     console.warn(`[API /api/auth/register] Mismatch: tenantContext in body ('${tenantContextFromBody}') vs x-tenant-id header ('${tenantSubdomainFromHeader}'). Using header.`);
-        // }
 
         // 3. Find the Tenant in the database using the subdomain from the HEADER
         const tenant = await prisma.tenant.findUnique({
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
             console.error(`[API /api/auth/register] Error: Tenant with subdomain '${tenantSubdomainFromHeader}' not found in database.`);
             return NextResponse.json(
                 { success: false, message: `Organization '${tenantSubdomainFromHeader}' not found. Cannot register.` },
-                { status: 404 } // Not Found: Tenant doesn't exist
+                { status: 404 }
             );
         }
         console.log(`[API /api/auth/register] Found tenant: ${tenant.name} (ID: ${tenant.id})`);
@@ -82,9 +83,9 @@ export async function POST(request: NextRequest) {
         // 4. Check if user already exists for this tenant
         const existingUser = await prisma.user.findUnique({
             where: {
-                tenantId_email: { // Using the @@unique([tenantId, email]) compound index
+                tenantId_email: {
                     tenantId: tenant.id,
-                    email: email, // email is already lowercased by Zod schema
+                    email: email,
                 },
             },
         });
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
             console.warn(`[API /api/auth/register] User with email '${email}' already exists for tenant '${tenant.name}'.`);
             return NextResponse.json(
                 { success: false, message: "A user with this email already exists for this organization." },
-                { status: 409 } // Conflict: User already exists
+                { status: 409 }
             );
         }
 
@@ -103,45 +104,43 @@ export async function POST(request: NextRequest) {
         console.log(`[API /api/auth/register] Password hashed for user '${email}'.`);
 
         // 6. Create the new user
-        const defaultUserRole = "member"; // Consider making this configurable or based on tenant type
+        const defaultUserRole = "member";
 
         const newUser = await prisma.user.create({
             data: {
-                name: name.trim(), // Ensure name is also trimmed server-side
-                email: email,      // Already lowercased
+                name: name.trim(),
+                email: email,
                 password: hashedPassword,
                 role: defaultUserRole,
                 tenantId: tenant.id,
-                // phoneNumber: body.phoneNumber, // If you add phoneNumber to Zod schema and form
+                phoneNumber: sanitizedPhoneNumber, // Add the sanitized phone number here
             },
-            select: { // Only return non-sensitive fields
+            select: {
                 id: true,
                 email: true,
                 name: true,
                 role: true,
+                phoneNumber: true, // Optionally return phoneNumber if needed by client post-registration
             }
         });
-        console.log(`[API /api/auth/register] New user created: ${newUser.email} (ID: ${newUser.id}) for tenant ${tenant.name}`);
+        console.log(`[API /api/auth/register] New user created: ${newUser.email} (ID: ${newUser.id}, Phone: ${newUser.phoneNumber || 'N/A'}) for tenant ${tenant.name}`);
 
         // 7. Return success response
-        // TODO: Consider sending a verification email here in a real application
         return NextResponse.json(
             {
                 success: true,
                 message: "Account created successfully! Please proceed to login.",
                 user: newUser,
-                redirectTo: `/login` // Client will handle redirect on the same tenant subdomain
+                redirectTo: `/login`
             },
-            { status: 201 } // Created
+            { status: 201 }
         );
 
     } catch (error) {
         console.error("[API /api/auth/register] UNHANDLED ERROR:", error);
-        // Check if it's a Prisma-specific error for more tailored responses, though generic 500 is often okay.
-        // if (error instanceof Prisma.PrismaClientKnownRequestError) { ... }
         return NextResponse.json(
             { success: false, message: "An unexpected internal server error occurred during registration." },
-            { status: 500 } // Internal Server Error
+            { status: 500 }
         );
     }
 }

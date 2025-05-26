@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST='{"components/auth/SelectTenantLoader.tsx -> @/components/auth/SelectTenantForm":{"id":823,"files":["static/chunks/823.89f530eaafb7b4bd.js"]}}';

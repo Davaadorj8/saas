@@ -3,7 +3,6 @@
 
 import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-// import Link from 'next/link'; // Only if you have links directly inside this form component
 
 interface RegisterApiResponse {
     success: boolean;
@@ -28,6 +27,7 @@ export default function RegisterForm({
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState(''); // New state for phone number
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -48,6 +48,15 @@ export default function RegisterForm({
             return;
         }
 
+        // Basic phone number validation (optional, enhance as needed)
+        // This is a very simple regex, consider a library for robust validation
+        if (phoneNumber && !/^\+?[0-9\s-()]{7,20}$/.test(phoneNumber)) {
+            setErrorMessage('Please enter a valid phone number or leave it blank.');
+            setIsLoading(false);
+            return;
+        }
+
+
         // This check is crucial. If this form is always meant to be used in a tenant context,
         // tenantSubdomain should NOT be null here.
         if (!tenantSubdomain) {
@@ -67,6 +76,7 @@ export default function RegisterForm({
                     name,
                     email,
                     password,
+                    phoneNumber, // Include phone number in the request body
                     // tenantSubdomain from prop is used to confirm context,
                     // but API should rely on x-tenant-id header set by middleware
                     tenantContext: tenantSubdomain,
@@ -77,7 +87,11 @@ export default function RegisterForm({
 
             if (!response.ok) {
                 if (data.errors) {
-                    const errorMessages = Object.values(data.errors).flat().join(' '); // Assuming Zod-like error structure
+                    // Example: Flatten Zod errors if they are in an array per field
+                    // { field1: ["error1"], field2: ["errorA", "errorB"] }
+                    const errorMessages = Object.values(data.errors)
+                        .flat() // [['error1'], ['errorA', 'errorB']] -> ['error1', 'errorA', 'errorB']
+                        .join(' ');
                     setErrorMessage(errorMessages || data.message || `Registration failed (status: ${response.status})`);
                 } else {
                     setErrorMessage(data.message || `Registration failed (status: ${response.status})`);
@@ -148,6 +162,26 @@ export default function RegisterForm({
                 </div>
             </div>
 
+            {/* New Phone Number Field */}
+            <div>
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                    Phone Number <span className="text-xs text-gray-500">(Optional)</span>
+                </label>
+                <div className="mt-1">
+                    <input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel" // Use 'tel' for phone numbers
+                        autoComplete="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        disabled={isLoading}
+                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
+                        placeholder="+1 (555) 123-4567" // Example placeholder
+                    />
+                </div>
+            </div>
+
             <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                     Password
@@ -159,11 +193,13 @@ export default function RegisterForm({
                         type="password"
                         autoComplete="new-password"
                         required
+                        minLength={6} // Added minLength for basic client-side validation
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isLoading}
                         className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm disabled:bg-gray-100"
                     />
+                     <p className="mt-1 text-xs text-gray-500">Must be at least 6 characters long.</p>
                 </div>
             </div>
              <div>
