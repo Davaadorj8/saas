@@ -1,4 +1,3 @@
-// src/components/dashboard/BaseDashboardLayout.tsx
 'use client';
 
 import { useState, useEffect, ReactNode, useCallback } from 'react';
@@ -12,7 +11,6 @@ import {
   Bell,
   Pin,
   Layers,
-  // UserCircle, SlidersHorizontal, LifeBuoy, Home, Package, PlusCircle // These will be passed in navItems
 } from 'lucide-react';
 import type { Tenant } from '@prisma/client'; // Assuming Tenant type is globally available or adjust path
 
@@ -124,11 +122,18 @@ export default function BaseDashboardLayout({
   });
   
   const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
+  const [showUserMenuDropdown, setShowUserMenuDropdown] = useState(false); // New state for user menu
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [modalTitle, setModalTitle] = useState<string>("Details");
 
+  // User menu items
+  const userMenuItems = [
+    { title: "Profile", action: () => console.log("Navigate to Profile") },
+    { title: "Settings", action: () => console.log("Navigate to Settings") },
+    { title: "Logout", action: () => console.log("Logout") },
+  ];
 
   // --- Effects for localStorage ---
   useEffect(() => {
@@ -248,7 +253,7 @@ export default function BaseDashboardLayout({
             </div>
           </div>
         )}
-         {sidebarFooterContent && <div className="border-t border-sidebar-border">{sidebarFooterContent}</div>}
+        {sidebarFooterContent && <div className="border-t border-sidebar-border">{sidebarFooterContent}</div>}
       </div>
 
       {/* Main Content Area */}
@@ -296,25 +301,56 @@ export default function BaseDashboardLayout({
                         ))
                       )}
                     </div>
-                     {notifications.length > 0 && (
-                        <div className="p-2 text-center border-t">
-                            <button onClick={() => { handleNavClick("Notifications"); setShowNotificationsDropdown(false);}} className="text-xs text-indigo-600 hover:underline">View all notifications</button>
-                        </div>
+                    {notifications.length > 0 && (
+                      <div className="p-2 text-center border-t">
+                        <button onClick={() => { handleNavClick("Notifications"); setShowNotificationsDropdown(false);}} className="text-xs text-indigo-600 hover:underline">View all notifications</button>
+                      </div>
                     )}
                   </div>
                 )}
               </div>
-              {/* User Menu (Placeholder) */}
-              <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600" title="User Menu">
-                <MenuIcon size={20} />
-              </button>
+              {/* User Menu */}
+              <div className="relative">
+                <button
+                  className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 flex items-center gap-2"
+                  onClick={() => setShowUserMenuDropdown(!showUserMenuDropdown)}
+                  title="User Menu"
+                >
+                  <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-medium">
+                    {tenant.name.charAt(0).toUpperCase()}
+                  </div>
+                  {sidebarExpanded && <span className="text-sm font-medium">{tenant.name}</span>}
+                </button>
+                {showUserMenuDropdown && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 border">
+                    <div className="p-3 border-b">
+                      <p className="text-sm font-medium text-gray-700">{tenant.name}</p>
+                      <p className="text-xs text-gray-500">User Role</p>
+                    </div>
+                    <div className="py-1">
+                      {userMenuItems.map((item) => (
+                        <button
+                          key={item.title}
+                          onClick={() => {
+                            item.action();
+                            setShowUserMenuDropdown(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                        >
+                          {item.title}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {/* Pinned Cards Bar */}
           {dashboardCards.length > 0 && pinnedCards.length > 0 && (
             <div className="bg-gray-50 px-4 py-2 flex gap-3 overflow-x-auto border-b items-center">
-               <Pin size={14} className="text-indigo-500 mr-1 flex-shrink-0" />
+              <Pin size={14} className="text-indigo-500 mr-1 flex-shrink-0" />
               {pinnedCards.map(cardId => {
                 const card = getCardById(cardId);
                 return card ? (
@@ -365,11 +401,8 @@ export default function BaseDashboardLayout({
             <div className="p-4 sm:p-6 min-h-[150px] max-h-[70vh] overflow-y-auto">
               {modalContent || <p>Modal content goes here.</p>}
             </div>
-            {/* Modal footer can be part of modalContent if specific actions are needed */}
-            {/* Or add a generic footer here if desired */}
-             <div className="p-4 sm:p-5 border-t flex justify-end gap-3">
+            <div className="p-4 sm:p-5 border-t flex justify-end gap-3">
               <button onClick={hideCustomModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md">Close</button>
-              {/* <button onClick={() => { console.log("Modal action confirmed"); hideCustomModal(); }} className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md">Confirm Action</button> */}
             </div>
           </div>
         </div>
@@ -385,7 +418,6 @@ export default function BaseDashboardLayout({
         .hover\\:text-sidebar-foreground-hover:hover { color: #ffffff; }
         .bg-sidebar-active { background-color: #4f46e5; /* Example: indigo-600 */ }
         .text-sidebar-muted-foreground { color: #9ca3af; /* Example: gray-400 */ }
-
 
         /* Toggle Switch (if used by child components via renderMainContent) */
         .switch { position: relative; display: inline-block; width: 34px; height: 20px; }
