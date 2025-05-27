@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, ReactNode, useCallback } from 'react';
+import { useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import {
   Maximize2,
   Minimize2,
@@ -14,9 +14,9 @@ import {
   Layers,
 } from 'lucide-react';
 import type { Tenant } from '@prisma/client'; // Assuming Tenant type is globally available or adjust path
+import { useRouter } from 'next/navigation';
 
 // --- Type Definitions ---
-import { useRouter } from 'next/navigation';
 export interface NavItem {
   icon: ReactNode;
   title: string;
@@ -81,12 +81,11 @@ export default function BaseDashboardLayout({
 }: BaseDashboardLayoutProps) {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [activeSection, setActiveSection] = useState(
- initialActiveSection || (navItems[0]?.title) || 'Dashboard'
+    initialActiveSection || (navItems[0]?.title) || 'Dashboard'
   );
 
   const LSK_MINIMIZED_CARDS = `minimizedCards_${tenantType}_${tenant.id}`;
   const LSK_PINNED_CARDS = `pinnedCards_${tenantType}_${tenant.id}`;
-
   const LSK_NOTIFICATIONS = `notifications_${tenantType}_${tenant.id}`;
 
   const [minimizedCards, setMinimizedCards] = useState<Array<string | number>>(() => {
@@ -94,7 +93,10 @@ export default function BaseDashboardLayout({
       const stored = localStorage.getItem(LSK_MINIMIZED_CARDS);
       try {
         return stored ? JSON.parse(stored) : [];
-      } catch (e) { console.error(`Error parsing ${LSK_MINIMIZED_CARDS} from localStorage`, e); return []; }
+      } catch (e) {
+        console.error(`Error parsing ${LSK_MINIMIZED_CARDS} from localStorage`, e);
+        return [];
+      }
     }
     return [];
   });
@@ -106,7 +108,10 @@ export default function BaseDashboardLayout({
       const stored = localStorage.getItem(LSK_PINNED_CARDS);
       try {
         return stored ? JSON.parse(stored) : [];
-      } catch (e) { console.error(`Error parsing ${LSK_PINNED_CARDS} from localStorage`, e); return []; }
+      } catch (e) {
+        console.error(`Error parsing ${LSK_PINNED_CARDS} from localStorage`, e);
+        return [];
+      }
     }
     return [];
   });
@@ -125,18 +130,18 @@ export default function BaseDashboardLayout({
   });
 
   const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
-  const [showUserMenuDropdown, setShowUserMenuDropdown] = useState(false); // New state for user menu
-
+  const [showUserMenuDropdown, setShowUserMenuDropdown] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [modalTitle, setModalTitle] = useState<string>("Details");
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
+  const userMenuRef = useRef<HTMLDivElement>(null); // Ref for click-outside detection
 
-  // User menu items (now using router.push for navigation)
+  // User menu items with navigation
   const userMenuItems = [
-    { title: "Profile", action: () => console.log("Navigate to Profile") },
-    { title: "Settings", action: () => console.log("Navigate to Settings") },
-    { title: "Logout", action: () => console.log("Logout") },
+    { title: "Profile", action: () => router.push('/profile') },
+    { title: "Settings", action: () => router.push('/settings') },
+    { title: "Logout", action: () => router.push('/logout') }, // Assuming /logout route for handling logout
   ];
 
   // --- Effects for localStorage ---
@@ -157,6 +162,17 @@ export default function BaseDashboardLayout({
       localStorage.setItem(LSK_NOTIFICATIONS, JSON.stringify(notifications));
     }
   }, [notifications, LSK_NOTIFICATIONS]);
+
+  // Click-outside handler for user menu dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setShowUserMenuDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // --- Helper Functions ---
   const toggleSidebar = () => setSidebarExpanded(!sidebarExpanded);
@@ -204,7 +220,7 @@ export default function BaseDashboardLayout({
   const handleNavClick = (title: string) => {
     setActiveSection(title);
     setMaximizedCard(null); // Reset maximized card when changing sections
-  }
+  };
 
   const getCardById = (cardId: string | number) => dashboardCards.find(c => c.id === cardId);
 
@@ -314,11 +330,13 @@ export default function BaseDashboardLayout({
                 )}
               </div>
               {/* User Menu */}
-              <div className="relative">
+              <div className="relative user-menu" ref={userMenuRef}>
                 <button
                   className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 flex items-center gap-2"
                   onClick={() => setShowUserMenuDropdown(!showUserMenuDropdown)}
                   title="User Menu"
+                  aria-expanded={showUserMenuDropdown}
+                  aria-label="User menu"
                 >
                   <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-medium">
                     {tenant.name.charAt(0).toUpperCase()}
@@ -326,7 +344,7 @@ export default function BaseDashboardLayout({
                   {sidebarExpanded && <span className="text-sm font-medium">{tenant.name}</span>}
                 </button>
                 {showUserMenuDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 border">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 border" role="menu">
                     <div className="p-3 border-b">
                       <p className="text-sm font-medium text-gray-700">{tenant.name}</p>
                       <p className="text-xs text-gray-500">User Role</p>
@@ -340,6 +358,7 @@ export default function BaseDashboardLayout({
                             setShowUserMenuDropdown(false);
                           }}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
+                          role="menuitem"
                         >
                           {item.title}
                         </button>
