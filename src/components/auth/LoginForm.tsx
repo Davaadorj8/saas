@@ -1,21 +1,20 @@
-// Create this file: C:\Users\user\Documents\saas\src\components\auth\LoginForm.tsx
+// src/components/auth/LoginForm.tsx
 "use client";
 
 import { useState, FormEvent, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { signIn } from 'next-auth/react'; // <<<< IMPORT signIn from NextAuth.js
 
-interface LoginApiResponse {
-    success: boolean;
-    message?: string;
-    redirectTo?: string;
-}
+// Interface for LoginApiResponse is no longer strictly needed for the signIn result,
+// but can be kept if you have other uses or for initial error message understanding.
+// The `signIn` function returns a specific object structure.
 
 export default function LoginForm({
     tenantSubdomain,
     tenantDisplayName,
 }: {
-    tenantSubdomain: string | null;
+    tenantSubdomain: string | null; // Keep this prop to pass to signIn
     tenantDisplayName: string;
 }) {
     const router = useRouter();
@@ -23,69 +22,99 @@ export default function LoginForm({
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [rememberMe, setRememberMe] = useState(false);
+    // 'rememberMe' is not directly handled by NextAuth.js signIn by default.
+    // Session duration is controlled by NextAuth.js config (maxAge in session options or cookie expiry).
+    // If you need custom "remember me" beyond default session, it requires more advanced setup.
+    // For now, let's comment it out or remove it to simplify.
+    // const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    // Success message might not be needed as we redirect immediately on success
+    // const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
+        // NextAuth.js can pass an 'error' query param on redirect from its default error page
+        // or if the signIn call itself fails and you redirect.
         const error = searchParams.get('error');
-        if (error === 'invalid_credentials') {
-            setErrorMessage('Invalid email or password. Please try again.');
-        } else if (error === 'tenant_not_found') {
-            setErrorMessage('Organization not found. Please verify the address or select your organization.');
-        } else if (error) {
-            setErrorMessage(`Login failed: An issue occurred (${error}).`);
+        if (error) {
+            // You can map NextAuth.js error codes to more user-friendly messages
+            // Common error from CredentialsProvider if authorize returns null or throws: "CredentialsSignin"
+            if (error === "CredentialsSignin") {
+                setErrorMessage("Invalid email, password, or organization. Please try again.");
+            } else if (error === "OAuthAccountNotLinked") {
+                setErrorMessage("This email is already linked with another provider. Please sign in using that method.");
+            } else {
+                // Try to decode and display the error message if it's URL-encoded
+                try {
+                    const decodedError = decodeURIComponent(error);
+                    setErrorMessage(decodedError || `Login failed: An unexpected error occurred.`);
+                } catch (e) {
+                    setErrorMessage(`Login failed: An unexpected error occurred.`);
+                }
+            }
         }
-    }, [searchParams]);
+        // Clear the error from URL to prevent it from showing again on refresh
+        // router.replace(router.pathname, undefined); // Be careful with this, might cause loops if not handled well
+    }, [searchParams]); // router removed from dependencies to avoid potential re-renders triggering this
 
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsLoading(true);
         setErrorMessage(null);
-        setSuccessMessage(null);
+        // setSuccessMessage(null);
 
         if (!tenantSubdomain) {
             setErrorMessage("Cannot log in: Organization information is missing. Please select your organization first.");
             setIsLoading(false);
-            // Optionally, redirect to /select-tenant
-            // router.push('/select-tenant?error=login_attempt_no_tenant');
             return;
         }
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    tenantSubdomain,
-                    rememberMe,
-                }),
+            // Use NextAuth.js signIn function
+            const result = await signIn('credentials', {
+                // We handle the redirect manually to show errors on this page
+                redirect: false,
+                email: email.toLowerCase(),
+                password: password,
+                tenantSubdomain: tenantSubdomain, // Pass tenantSubdomain to your `authorize` function
+                // rememberMe, // 'rememberMe' is not a standard param for CredentialsProvider by default
             });
 
-            const data: LoginApiResponse = await response.json();
+            setIsLoading(false); // Set loading to false after signIn attempt
 
-            if (!response.ok) {
-                setErrorMessage(data.message || `Login failed (status: ${response.status})`);
-            } else {
-                if (data.success) {
-                    setSuccessMessage(data.message || 'Login successful! Redirecting...');
-                    const redirectTo = searchParams.get('redirectTo') || data.redirectTo || `/${tenantSubdomain}/dashboard`;
-                    router.push(redirectTo);
+            if (result?.error) {
+                // `result.error` will contain the error message thrown from your `authorize` function
+                // or a generic NextAuth.js error code (e.g., "CredentialsSignin")
+                console.error('NextAuth SignIn Error:', result.error);
+                // Use the error message directly from NextAuth if available and user-friendly
+                // Otherwise, provide a generic one based on "CredentialsSignin"
+                if (result.error === "CredentialsSignin" || result.error.includes("Invalid email or password") || result.error.includes("Organization not found")) {
+                    setErrorMessage(result.error); // Display the error from authorize
                 } else {
-                    setErrorMessage(data.message || 'Login failed. Please check your credentials.');
+                    setErrorMessage("Login failed. Please check your credentials or organization.");
                 }
+            } else if (result?.ok && result.url) {
+                // Login was successful
+                // `result.ok` is true and `result.url` will be the intended redirect URL
+                // setSuccessMessage('Login successful! Redirecting...'); // Optional
+                const callbackUrl = searchParams.get('callbackUrl'); // Check for callbackUrl from query
+                router.push(callbackUrl || `/${tenantSubdomain}/dashboard`); // Redirect to dashboard or callbackUrl
+            } else if (result?.ok && !result.url) {
+                // This case should ideally not happen if redirect:false is used and there's no error.
+                // It might mean signin was ok but no redirect URL was determined by next-auth (unlikely with redirect:false)
+                // For safety, redirect to dashboard.
+                const callbackUrl = searchParams.get('callbackUrl');
+                router.push(callbackUrl || `/${tenantSubdomain}/dashboard`);
+            } else {
+                // Fallback for any other unexpected scenario from signIn
+                setErrorMessage('An unexpected issue occurred during login. Please try again.');
             }
         } catch (error) {
-            console.error('Login error:', error);
-            setErrorMessage('An unexpected error occurred during login. Please try again.');
-        } finally {
+            // This catch block is for network errors or truly unexpected issues with the signIn call itself
+            console.error('Login submit catch error:', error);
             setIsLoading(false);
+            setErrorMessage('A network error or unexpected issue occurred. Please try again.');
         }
     };
 
@@ -96,11 +125,12 @@ export default function LoginForm({
                     {errorMessage}
                 </div>
             )}
-            {successMessage && (
+            {/* Success message is less common here as we usually redirect immediately */}
+            {/* {successMessage && (
                 <div role="alert" className="p-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-md">
                     {successMessage}
                 </div>
-            )}
+            )} */}
             <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email address
@@ -140,23 +170,27 @@ export default function LoginForm({
             </div>
 
             <div className="flex items-center justify-between">
-                <div className="flex items-center">
+                {/* "Remember me" is generally handled by session duration in NextAuth.js */}
+                {/* <div className="flex items-center">
                     <input
                         id="remember-me"
                         name="remember-me"
                         type="checkbox"
-                        checked={rememberMe}
-                        onChange={(e) => setRememberMe(e.target.checked)}
+                        // checked={rememberMe}
+                        // onChange={(e) => setRememberMe(e.target.checked)}
                         disabled={isLoading}
                         className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
                     <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                         Remember me
                     </label>
+                </div> */}
+                <div className="text-sm">
+                    {/* Empty div to maintain spacing if remember me is removed, or adjust layout */}
                 </div>
 
                 <div className="text-sm">
-                    <Link href="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+                    <Link href={tenantSubdomain ? `/${tenantSubdomain}/forgot-password` : "/forgot-password"} className="font-medium text-indigo-600 hover:text-indigo-500">
                         Forgot your password?
                     </Link>
                 </div>
