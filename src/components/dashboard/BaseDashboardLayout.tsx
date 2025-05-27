@@ -8,6 +8,7 @@ import {
   Menu as MenuIcon, // Renamed to avoid conflict with Menu HTML element
   ChevronLeft,
   ChevronRight,
+  LogOut,
   Bell,
   Pin,
   Layers,
@@ -15,6 +16,7 @@ import {
 import type { Tenant } from '@prisma/client'; // Assuming Tenant type is globally available or adjust path
 
 // --- Type Definitions ---
+import { useRouter } from 'next/navigation';
 export interface NavItem {
   icon: ReactNode;
   title: string;
@@ -79,11 +81,12 @@ export default function BaseDashboardLayout({
 }: BaseDashboardLayoutProps) {
   const [sidebarExpanded, setSidebarExpanded] = useState(true);
   const [activeSection, setActiveSection] = useState(
-    initialActiveSection || (navItems[0]?.title) || 'Dashboard'
+ initialActiveSection || (navItems[0]?.title) || 'Dashboard'
   );
 
   const LSK_MINIMIZED_CARDS = `minimizedCards_${tenantType}_${tenant.id}`;
   const LSK_PINNED_CARDS = `pinnedCards_${tenantType}_${tenant.id}`;
+
   const LSK_NOTIFICATIONS = `notifications_${tenantType}_${tenant.id}`;
 
   const [minimizedCards, setMinimizedCards] = useState<Array<string | number>>(() => {
@@ -97,7 +100,7 @@ export default function BaseDashboardLayout({
   });
 
   const [maximizedCard, setMaximizedCard] = useState<string | number | null>(null);
-  
+
   const [pinnedCards, setPinnedCards] = useState<Array<string | number>>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(LSK_PINNED_CARDS);
@@ -120,15 +123,16 @@ export default function BaseDashboardLayout({
     }
     return initialNotifications;
   });
-  
+
   const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
   const [showUserMenuDropdown, setShowUserMenuDropdown] = useState(false); // New state for user menu
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [modalTitle, setModalTitle] = useState<string>("Details");
+  const router = useRouter(); // Initialize useRouter
 
-  // User menu items
+  // User menu items (now using router.push for navigation)
   const userMenuItems = [
     { title: "Profile", action: () => console.log("Navigate to Profile") },
     { title: "Settings", action: () => console.log("Navigate to Settings") },
