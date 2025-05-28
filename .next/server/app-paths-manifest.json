@@ -3,6 +3,5 @@
   "/api/auth/login/route": "app/api/auth/login/route.js",
   "/client/dashboard/page": "app/client/dashboard/page.js",
   "/client/login/page": "app/client/login/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
   "/select-tenant/page": "app/select-tenant/page.js"
 }

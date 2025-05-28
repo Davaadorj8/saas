@@ -4,23 +4,30 @@
 import { ReactNode } from 'react';
 import {
   Home, Layers, User, Settings, Bell,
-  Tag, Megaphone, FileText, Wrench, ShoppingCart, Package as PackageIcon, Truck, Users as UsersIcon, // Module icons
-  // Maximize2, Minimize2, Pin, X, PlusCircle, (not all used directly here)
+  Tag, Megaphone, FileText, Wrench, ShoppingCart, Package as PackageIcon, Truck, Users as UsersIcon,
 } from 'lucide-react';
 import type { Tenant } from '@prisma/client';
 
-import BaseDashboardLayout, {
+// Import BaseDashboardLayout component (default export)
+import BaseDashboardLayout from './BaseDashboardLayout';
+
+// Import general dashboard types from ./types
+import {
   NavItem,
   DashboardCard as BaseDashboardCard,
   Notification as BaseNotification,
   RenderMainContentParams,
-  // Assuming ShowCustomModalType is exported from BaseDashboardLayout or defined in types.ts
-} from './BaseDashboardLayout';
+  // Assuming ShowCustomModalType would also be in ./types if needed globally
+} from './types'; // This path is for general dashboard types
 
-// Import QuickBoard and its types/plugins
+// Import QuickBoard specific types from ./quickboard/types
+import {
+  QuickBoardPlugin,
+  BasePluginComponentProps,
+} from './quickboard/types'; // Corrected path for QuickBoard types
+
+// Import QuickBoard component
 import OriginalQuickBoardComponent from './quickboard/QuickBoardComponent';
-// Use the generic QuickBoardPlugin type
-import { QuickBoardPlugin, BasePluginComponentProps } from './quickboard/types';
 
 // --- IMPORT YOUR EXISTING QUICKBOARD PLUGINS ---
 import UserCountQuickBoardPlugin from './quickboard/plugins/UserCountQuickBoardPlugin';
@@ -39,10 +46,10 @@ interface SubmoduleDefinition {
 }
 
 interface ModuleDefinition {
-  id: string; // internal id, e.g., 'sales'
-  name: string; // User-facing name, e.g., "Sales"
-  navTitle: string; // Title for navigation, incorporating icon string e.g., "🏷️ Sales"
-  icon: IconType; // ReactNode for Lucide icon component
+  id: string;
+  name: string;
+  navTitle: string;
+  icon: IconType;
   purpose: string;
   submodules: SubmoduleDefinition[];
 }
@@ -68,7 +75,7 @@ const appModules: ModuleDefinition[] = [
     icon: <Megaphone size={20} />,
     purpose: 'Campaigns, outreach, CRM, integrations (ManyChat, email, FB).',
     submodules: [
-      { id: 'marketing-social-campaigns', name: 'Social Campaigns (ManyChat)', purpose: 'Manage social media campaigns, e.g., via ManyChat.', pluginDefinition: 'manychatControlEmbedded' }, // Example linking to an existing plugin
+      { id: 'marketing-social-campaigns', name: 'Social Campaigns (ManyChat)', purpose: 'Manage social media campaigns, e.g., via ManyChat.', pluginDefinition: 'manychatControlEmbedded' },
       { id: 'marketing-email-blasts', name: 'Email Blasts', purpose: 'Send out mass email communications.' },
       { id: 'marketing-meta-ads', name: 'Meta Ads', purpose: 'Manage advertising campaigns on Meta platforms.' },
       { id: 'marketing-campaign-performance', name: 'Campaign Performance', purpose: 'Track and analyze the effectiveness of marketing campaigns.' },
@@ -202,10 +209,9 @@ export default function DashboardLayoutClient({
 }: DashboardLayoutClientProps) {
   const tenantType = 'client';
 
-  // --- NAVIGATION ITEMS ---
   const moduleNavItems: NavItem[] = appModules.map(module => ({
     icon: module.icon,
-    title: module.navTitle, // This will be used as activeSection key
+    title: module.navTitle,
   }));
 
   const staticTopNavItems: NavItem[] = [
@@ -222,11 +228,8 @@ export default function DashboardLayoutClient({
   const navItems: NavItem[] = [
     ...staticTopNavItems,
     ...moduleNavItems,
-    // Consider how to best integrate bottom items if BaseDashboardLayout supports sections
-    // For now, they are just appended. BaseDashboardLayout might render them all in one list.
     ...staticBottomNavItems, 
   ];
-
 
   const clientDashboardCards: BaseDashboardCard[] = [
     { id: 'client-card-1', title: 'Global Analytics', color: 'bg-blue-100' },
@@ -238,12 +241,10 @@ export default function DashboardLayoutClient({
   ];
 
   const getCurrentUserRoles = (): string[] => {
-    // In a real app, this would come from auth context or similar
     return ['admin', 'marketing_user', 'analyst_user', 'procurement_user', 'sales_user', 'support_user'];
   };
   const currentUserRoles = getCurrentUserRoles();
 
-  // --- DEFINE AVAILABLE QUICKBOARD PLUGINS ---
   const availableQuickBoardPlugins: QuickBoardPlugin<any>[] = [
     {
       id: 'userCount',
@@ -261,21 +262,16 @@ export default function DashboardLayoutClient({
         modalTitle: "ManyChat Control Center"
       }
     },
-    // This is the actual ManyChat control panel that can be embedded or launched by LaunchManyChatControlPlugin
     {
       id: 'manychatControlEmbedded', 
       title: 'Embedded ManyChat Controls',
       component: ManyChatControlQuickBoardPlugin,
       roles: ['admin', 'marketing_user'],
     },
-
-    // Supplier Module Plugins
     { id: 'supplierDirectory', title: 'Supplier Directory', component: SupplierDirectoryQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
     { id: 'supplierContracts', title: 'Supplier Contracts', component: SupplierContractsQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
     { id: 'supplierRatings', title: 'Supplier Ratings', component: SupplierRatingsQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
     { id: 'supplierPaymentSetup', title: 'Supplier Payment Setup', component: SupplierPaymentSetupQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
-
-    // Customer Module Plugins
     { id: 'customerDirectory', title: 'Customer Directory', component: CustomerDirectoryQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
     { id: 'customerNotes', title: 'Customer Notes & Tags', component: CustomerNotesQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
     { id: 'customerInteractionLog', title: 'Customer Interaction Log', component: CustomerInteractionLogQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
@@ -284,12 +280,8 @@ export default function DashboardLayoutClient({
 
   const renderMainContent = ({
     activeSection,
-    // dashboardCards, // Not used if 'Main Board' is removed or handled differently
-    // minimizedCards, maximizedCard, pinnedCards, // Related to 'Main Board'
-    // toggleMinimizeCard, toggleMaximizeCard, togglePinCard, // Related to 'Main Board'
     showCustomModal,
   }: RenderMainContentParams): ReactNode => {
-    
     const activeModule = appModules.find(module => module.navTitle === activeSection);
 
     if (activeModule) {
@@ -300,7 +292,6 @@ export default function DashboardLayoutClient({
             <h2 className="text-2xl font-semibold text-gray-800">{activeModule.name}</h2>
           </div>
           <p className="text-gray-600 mb-6 ml-10">{activeModule.purpose}</p>
-          
           <h3 className="text-xl font-semibold text-gray-700 mb-4">Submodules</h3>
           {activeModule.submodules.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -319,12 +310,11 @@ export default function DashboardLayoutClient({
                     {qbPlugin && qbPlugin.component && showCustomModal && (
                        <button
                          onClick={() => showCustomModal(
-                           // Ensure the plugin component receives necessary props
                            <qbPlugin.component
-                             showCustomModal={showCustomModal} // For nested modals
-                             {...(qbPlugin.props || {})} // Spread any predefined props for this plugin
+                             showCustomModal={showCustomModal}
+                             {...(qbPlugin.props || {})}
                            />,
-                           submodule.name // Modal title
+                           submodule.name
                          )}
                          className="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm transition-colors"
                        >
@@ -345,11 +335,9 @@ export default function DashboardLayoutClient({
       );
     }
 
-    // Handle static sections
     switch (activeSection) {
       case 'Overview':
         return initialDashboardContent;
-
       case 'Quick Board':
         return (
           <OriginalQuickBoardComponent
@@ -358,7 +346,6 @@ export default function DashboardLayoutClient({
             userRoles={currentUserRoles}
           />
         );
-
       case 'My Account':
         return ( <div className="bg-white p-6 rounded-lg shadow"> <h2 className="text-xl font-semibold mb-4">My Client Account</h2> <p>Details about the client's account would go here.</p></div> );
       case 'Notifications':
@@ -375,10 +362,10 @@ export default function DashboardLayoutClient({
       tenant={tenant}
       tenantType={tenantType}
       navItems={navItems}
-      dashboardCards={clientDashboardCards} // May be used by BaseDashboardLayout or Overview
+      dashboardCards={clientDashboardCards}
       initialNotifications={initialNotifications}
       renderMainContent={renderMainContent}
-      initialActiveSection="Overview" // Default to Overview or first module
+      initialActiveSection="Overview"
     />
   );
 }

@@ -69,7 +69,6 @@
     --color-orange-500: oklch(70.5% .213 47.604);
     --color-amber-100: oklch(96.2% .059 95.617);
     --color-amber-700: oklch(55.5% .163 48.998);
-    --color-yellow-100: oklch(97.3% .071 103.193);
     --color-lime-100: oklch(96.7% .067 122.328);
     --color-green-50: oklch(98.2% .018 155.826);
     --color-green-100: oklch(96.2% .044 156.743);
@@ -96,7 +95,6 @@
     --color-indigo-700: oklch(45.7% .24 277.023);
     --color-indigo-800: oklch(39.8% .195 277.366);
     --color-violet-100: oklch(94.3% .029 294.588);
-    --color-purple-100: oklch(94.6% .033 307.174);
     --color-purple-600: oklch(55.8% .288 302.321);
     --color-fuchsia-100: oklch(95.2% .037 318.852);
     --color-slate-100: oklch(96.8% .007 247.896);
@@ -342,10 +340,6 @@
     pointer-events: none;
   }
 
-  .visible {
-    visibility: visible;
-  }
-
   .sr-only {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
@@ -570,10 +564,6 @@
 
   .grid {
     display: grid;
-  }
-
-  .hidden {
-    display: none;
   }
 
   .inline-block {
@@ -1068,10 +1058,6 @@
     background-color: var(--color-lime-100);
   }
 
-  .bg-purple-100 {
-    background-color: var(--color-purple-100);
-  }
-
   .bg-red-50 {
     background-color: var(--color-red-50);
   }
@@ -1102,10 +1088,6 @@
 
   .bg-white {
     background-color: var(--color-white);
-  }
-
-  .bg-yellow-100 {
-    background-color: var(--color-yellow-100);
   }
 
   .bg-gradient-to-br {
@@ -1546,12 +1528,6 @@
   @media (hover: hover) {
     .hover\:bg-blue-600:hover {
       background-color: var(--color-blue-600);
-    }
-  }
-
-  @media (hover: hover) {
-    .hover\:bg-blue-700:hover {
-      background-color: var(--color-blue-700);
     }
   }
 
