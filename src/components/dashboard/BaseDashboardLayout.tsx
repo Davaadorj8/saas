@@ -6,12 +6,18 @@ import {
   Minimize2,
   X,
   Menu as MenuIcon, // Renamed to avoid conflict with Menu HTML element
-  ChevronLeft,
-  ChevronRight,
+  ChevronLeft,      // Used for left sidebar AND right sidebar toggle (collapsed state)
+  ChevronRight,     // Used for left sidebar AND right sidebar toggle (expanded state) AND group accordion
   LogOut,
   Bell,
   Pin,
   Layers,
+  ChevronDown,      // For communication group accordion
+  Video,            // For WebRTC icon
+  MessageSquare,    // For Text Message icon
+  Users,            // For Colleagues/Customers group icon
+  Briefcase,        // For Suppliers group icon
+  Phone,            // For Business Call icon
 } from 'lucide-react';
 import type { Tenant } from '@prisma/client'; // Assuming Tenant type is globally available or adjust path
 import { useRouter } from 'next/navigation';
@@ -20,25 +26,20 @@ import { useRouter } from 'next/navigation';
 export interface NavItem {
   icon: ReactNode;
   title: string;
-  // Optional: action to take, or identifier for content rendering
-  // If not provided, setActiveSection(item.title) is default
 }
 
 export interface DashboardCard {
   id: string | number;
   title: string;
-  color?: string; // Optional, for styling card background
-  // Optional: Custom render functions for specific card content, if not handled by renderMainContent
-  // renderSummary?: (card: DashboardCard) => ReactNode;
-  // renderMaximizedDetails?: (card: DashboardCard) => ReactNode;
+  color?: string;
 }
 
 export interface Notification {
   id: string | number;
   text: string;
   read: boolean;
-  timestamp?: string; // Optional
-  link?: string; // Optional
+  timestamp?: string;
+  link?: string;
 }
 
 export interface RenderMainContentParams {
@@ -52,27 +53,58 @@ export interface RenderMainContentParams {
   toggleMaximizeCard: (cardId: string | number) => void;
   togglePinCard: (cardId: string | number) => void;
   showCustomModal: (content: ReactNode, title?: string) => void;
-  setActiveSection: (sectionTitle: string) => void; // Allow main content to change section
+  setActiveSection: (sectionTitle: string) => void;
 }
 
 export interface BaseDashboardLayoutProps {
   tenant: Tenant;
-  tenantType: string; // e.g., "customer", "client", "supplier" for localStorage keys
+  tenantType: string;
   navItems: NavItem[];
   dashboardCards?: DashboardCard[];
   initialActiveSection?: string;
   initialNotifications?: Notification[];
   renderMainContent: (params: RenderMainContentParams) => ReactNode;
-  headerRightContent?: ReactNode; // Optional: For custom content next to notifications/menu
-  sidebarFooterContent?: ReactNode; // Optional: For custom content at the bottom of the sidebar
+  headerRightContent?: ReactNode;
+  sidebarFooterContent?: ReactNode;
+  // Potentially pass communication users as props in a real app
+  // communicationUsers?: CommunicationUser[];
 }
+
+// --- Communication Sidebar Types ---
+export interface CommunicationUser {
+  id: string;
+  name: string;
+  avatarUrl?: string;
+  isActive: boolean;
+  tenantType: 'client' | 'supplier' | 'customer'; // Used for grouping
+}
+
+// Mock data for communication users (replace with actual data fetching)
+const MOCK_COMMUNICATION_USERS: CommunicationUser[] = [
+  { id: 'colleague1', name: 'Eleanor Vance', isActive: true, tenantType: 'client' },
+  { id: 'colleague2', name: 'Marcus Bell', isActive: true, tenantType: 'client' },
+  { id: 'colleague3', name: 'Nina Petrova', isActive: false, tenantType: 'client' },
+  { id: 'supplier1', name: 'Supplier Alpha Inc.', isActive: true, tenantType: 'supplier' },
+  { id: 'supplier2', name: 'Supplier Beta Co.', isActive: true, tenantType: 'supplier' },
+  { id: 'customer1', name: 'Customer X Corp', isActive: true, tenantType: 'customer' },
+  { id: 'customer2', name: 'Customer Y Ltd', isActive: false, tenantType: 'customer' },
+  { id: 'customer3', name: 'Customer Z Global', isActive: true, tenantType: 'customer' },
+];
+
+const getActiveUsersByTenantType = (
+  users: CommunicationUser[],
+  type: 'client' | 'supplier' | 'customer'
+): CommunicationUser[] => {
+  return users.filter(user => user.tenantType === type && user.isActive);
+};
+
 
 // --- Component ---
 export default function BaseDashboardLayout({
   tenant,
   tenantType,
   navItems,
-  dashboardCards = [], // Default to empty array if not provided
+  dashboardCards = [],
   initialActiveSection,
   initialNotifications = [],
   renderMainContent,
@@ -91,12 +123,8 @@ export default function BaseDashboardLayout({
   const [minimizedCards, setMinimizedCards] = useState<Array<string | number>>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(LSK_MINIMIZED_CARDS);
-      try {
-        return stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        console.error(`Error parsing ${LSK_MINIMIZED_CARDS} from localStorage`, e);
-        return [];
-      }
+      try { return stored ? JSON.parse(stored) : []; }
+      catch (e) { console.error(`Error parsing ${LSK_MINIMIZED_CARDS} from localStorage`, e); return []; }
     }
     return [];
   });
@@ -106,12 +134,8 @@ export default function BaseDashboardLayout({
   const [pinnedCards, setPinnedCards] = useState<Array<string | number>>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(LSK_PINNED_CARDS);
-      try {
-        return stored ? JSON.parse(stored) : [];
-      } catch (e) {
-        console.error(`Error parsing ${LSK_PINNED_CARDS} from localStorage`, e);
-        return [];
-      }
+      try { return stored ? JSON.parse(stored) : []; }
+      catch (e) { console.error(`Error parsing ${LSK_PINNED_CARDS} from localStorage`, e); return []; }
     }
     return [];
   });
@@ -119,12 +143,8 @@ export default function BaseDashboardLayout({
   const [notifications, setNotifications] = useState<Notification[]>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(LSK_NOTIFICATIONS);
-      try {
-        return stored ? JSON.parse(stored) : initialNotifications;
-      } catch (e) {
-        console.error(`Error parsing ${LSK_NOTIFICATIONS} from localStorage`, e);
-        return initialNotifications;
-      }
+      try { return stored ? JSON.parse(stored) : initialNotifications; }
+      catch (e) { console.error(`Error parsing ${LSK_NOTIFICATIONS} from localStorage`, e); return initialNotifications; }
     }
     return initialNotifications;
   });
@@ -135,16 +155,20 @@ export default function BaseDashboardLayout({
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [modalTitle, setModalTitle] = useState<string>("Details");
   const router = useRouter();
-  const userMenuRef = useRef<HTMLDivElement>(null); // Ref for click-outside detection
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // User menu items with navigation
+  // --- State for Right Communication Sidebar ---
+  const [rightSidebarExpanded, setRightSidebarExpanded] = useState(false); // Default collapsed
+  const [activeChatUser, setActiveChatUser] = useState<CommunicationUser | null>(null);
+  const [isChatPopupOpen, setIsChatPopupOpen] = useState(false);
+
+
   const userMenuItems = [
     { title: "Profile", action: () => router.push('/profile') },
     { title: "Settings", action: () => router.push('/settings') },
-    { title: "Logout", action: () => router.push('/logout') }, // Assuming /logout route for handling logout
+    { title: "Logout", action: () => router.push('/logout') },
   ];
 
-  // --- Effects for localStorage ---
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem(LSK_MINIMIZED_CARDS, JSON.stringify(minimizedCards));
@@ -163,7 +187,6 @@ export default function BaseDashboardLayout({
     }
   }, [notifications, LSK_NOTIFICATIONS]);
 
-  // Click-outside handler for user menu dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
@@ -174,74 +197,186 @@ export default function BaseDashboardLayout({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // --- Helper Functions ---
   const toggleSidebar = () => setSidebarExpanded(!sidebarExpanded);
-
   const toggleMinimizeCard = useCallback((cardId: string | number) => {
     setMinimizedCards(prev => prev.includes(cardId) ? prev.filter(id => id !== cardId) : [...prev, cardId]);
-    if (maximizedCard === cardId) setMaximizedCard(null); // Unmaximize if minimizing the maximized card
+    if (maximizedCard === cardId) setMaximizedCard(null);
   }, [maximizedCard]);
 
   const toggleMaximizeCard = useCallback((cardId: string | number) => {
     setMaximizedCard(prev => prev === cardId ? null : cardId);
-    // If maximizing, ensure it's not minimized
     setMinimizedCards(prev => prev.filter(id => id !== cardId));
   }, []);
 
   const restoreCardFromMinimized = useCallback((cardId: string | number) => {
     setMinimizedCards(prev => prev.filter(id => id !== cardId));
-    // Optionally, you could also unmaximize other cards or set this as active,
-    // but for now, just removing from minimized list.
   }, []);
 
   const togglePinCard = useCallback((cardId: string | number) => {
     setPinnedCards(prev => prev.includes(cardId) ? prev.filter(id => id !== cardId) : [...prev, cardId]);
   }, []);
 
-  const toggleNotifications = () => {
-    setShowNotificationsDropdown(!showNotificationsDropdown);
-  };
-
-  const markAllNotificationsAsRead = () => {
-    setNotifications(prevNotifications => prevNotifications.map(n => ({ ...n, read: true })));
-  };
-
+  const toggleNotifications = () => setShowNotificationsDropdown(!showNotificationsDropdown);
+  const markAllNotificationsAsRead = () => setNotifications(prev => prev.map(n => ({ ...n, read: true })));
   const showCustomModal = useCallback((content: ReactNode, title: string = "Details") => {
-    setModalContent(content);
-    setModalTitle(title);
-    setIsModalOpen(true);
+    setModalContent(content); setModalTitle(title); setIsModalOpen(true);
   }, []);
-
-  const hideCustomModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
-  };
-
-  const handleNavClick = (title: string) => {
-    setActiveSection(title);
-    setMaximizedCard(null); // Reset maximized card when changing sections
-  };
-
+  const hideCustomModal = () => { setIsModalOpen(false); setModalContent(null); };
+  const handleNavClick = (title: string) => { setActiveSection(title); setMaximizedCard(null); };
   const getCardById = (cardId: string | number) => dashboardCards.find(c => c.id === cardId);
 
+  // --- Communication Action Handlers ---
+  const handleStartWebRTCCall = (user: CommunicationUser) => {
+    // Placeholder for WebRTC call logic
+    alert(`Starting WebRTC call with ${user.name} (Placeholder)`);
+    console.log("Initiate WebRTC call with:", user);
+  };
+
+  const handleOpenTextMessenger = (user: CommunicationUser) => {
+    setActiveChatUser(user);
+    setIsChatPopupOpen(true);
+    console.log("Open text messenger with:", user);
+  };
+
+  const handleInitiateBusinessCall = (user: CommunicationUser) => {
+    // Placeholder for custom business call logic
+    alert(`Initiating business call with ${user.name} (Custom Logic Placeholder)`);
+    console.log("Initiate Business Call (custom logic) with:", user);
+    // Example: showCustomModal(<div>Calling {user.name}...</div>, "Business Call");
+  };
+
+  const closeChatPopup = () => {
+    setIsChatPopupOpen(false);
+    setActiveChatUser(null);
+  };
+
+  // --- Right Sidebar Content Sub-Components ---
+  // (These could be moved to separate files for larger applications)
+
+  interface CommunicationUserGroupProps {
+    title: string;
+    icon: ReactNode;
+    users: CommunicationUser[];
+    onStartWebRTCCall: (user: CommunicationUser) => void;
+    onOpenTextMessenger: (user: CommunicationUser) => void;
+    onInitiateBusinessCall: (user: CommunicationUser) => void;
+  }
+
+  const CommunicationUserGroup: React.FC<CommunicationUserGroupProps> = ({
+    title, icon, users, onStartWebRTCCall, onOpenTextMessenger, onInitiateBusinessCall
+  }) => {
+    const [isOpen, setIsOpen] = useState(true);
+    const groupId = `comm-group-${title.toLowerCase().replace(/\s+/g, '-')}`;
+
+    return (
+      <div className="mb-2">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between p-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+          aria-expanded={isOpen}
+          aria-controls={groupId}
+        >
+          <div className="flex items-center">
+            {icon}
+            <span className="ml-2.5">{title} ({users.length})</span>
+          </div>
+          {isOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+        </button>
+        {isOpen && (
+          <ul id={groupId} className="mt-1.5 space-y-1 pl-4 pr-1 max-h-52 overflow-y-auto custom-scrollbar">
+            {users.length === 0 ? (
+              <li className="px-2 py-1.5 text-xs text-gray-500 italic">No active users in this group.</li>
+            ) : (
+              users.map(user => (
+                <li key={user.id} className="group flex items-center justify-between p-1.5 hover:bg-gray-50 rounded text-sm">
+                  <div className="flex items-center truncate">
+                    <div className={`w-2 h-2 rounded-full mr-2 flex-shrink-0 ${user.isActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                    <span className="text-gray-800 truncate" title={user.name}>{user.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0">
+                    <button title="WebRTC Call" onClick={() => onStartWebRTCCall(user)} className="p-1 text-gray-500 hover:text-indigo-600 rounded-full">
+                      <Video size={16} />
+                    </button>
+                    <button title="Text Message" onClick={() => onOpenTextMessenger(user)} className="p-1 text-gray-500 hover:text-indigo-600 rounded-full">
+                      <MessageSquare size={16} />
+                    </button>
+                    <button title="Business Call" onClick={() => onInitiateBusinessCall(user)} className="p-1 text-gray-500 hover:text-indigo-600 rounded-full">
+                      <Phone size={16} />
+                    </button>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+        )}
+      </div>
+    );
+  };
+
+  const CommunicationSidebarContent: React.FC = () => {
+    // In a real app, MOCK_COMMUNICATION_USERS might be passed as a prop or fetched here
+    const colleagues = getActiveUsersByTenantType(MOCK_COMMUNICATION_USERS, 'client');
+    const suppliers = getActiveUsersByTenantType(MOCK_COMMUNICATION_USERS, 'supplier');
+    const customers = getActiveUsersByTenantType(MOCK_COMMUNICATION_USERS, 'customer');
+
+    return (
+      <div className="flex flex-col h-full bg-white">
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between h-16">
+          <h3 className="text-lg font-semibold text-gray-800">Messenger</h3>
+          {/* Optional: Close button for sidebar itself, if toggle is not preferred */}
+        </div>
+        <div className="flex-1 p-3 overflow-y-auto custom-scrollbar">
+          <CommunicationUserGroup
+            title="Colleagues"
+            icon={<Users size={18} className="text-blue-600" />}
+            users={colleagues}
+            onStartWebRTCCall={handleStartWebRTCCall}
+            onOpenTextMessenger={handleOpenTextMessenger}
+            onInitiateBusinessCall={handleInitiateBusinessCall}
+          />
+          <CommunicationUserGroup
+            title="Suppliers"
+            icon={<Briefcase size={18} className="text-green-600" />}
+            users={suppliers}
+            onStartWebRTCCall={handleStartWebRTCCall}
+            onOpenTextMessenger={handleOpenTextMessenger}
+            onInitiateBusinessCall={handleInitiateBusinessCall}
+          />
+          <CommunicationUserGroup
+            title="Customers"
+            icon={<Users size={18} className="text-purple-600" />} // Or a more specific customer icon
+            users={customers}
+            onStartWebRTCCall={handleStartWebRTCCall}
+            onOpenTextMessenger={handleOpenTextMessenger}
+            onInitiateBusinessCall={handleInitiateBusinessCall}
+          />
+        </div>
+        <div className="p-3 border-t border-gray-200 text-center">
+          <p className="text-xs text-gray-500">© Communications Panel</p>
+        </div>
+      </div>
+    );
+  };
+
+
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-800">
-      {/* Sidebar */}
-      <div className={`bg-sidebar text-sidebar-foreground flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} transition-all duration-300 shadow-lg`}>
+    <div className="flex h-screen bg-gray-100 text-gray-800 overflow-hidden"> {/* Parent overflow hidden */}
+      {/* Left Sidebar */}
+      <div className={`bg-sidebar text-sidebar-foreground flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} transition-all duration-300 shadow-lg z-30`}>
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border h-16">
           {sidebarExpanded && <span className="font-semibold text-lg truncate" title={tenant.name}>{tenant.name}</span>}
           <button onClick={toggleSidebar} className="p-1 rounded hover:bg-sidebar-hover text-sidebar-foreground">
             {sidebarExpanded ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
         </div>
-        <nav className="flex-1 overflow-y-auto py-2">
+        <nav className="flex-1 overflow-y-auto py-2 custom-scrollbar">
           {navItems.map((item) => (
             <button
               key={item.title}
               title={item.title}
               className={`flex items-center w-full p-3 text-sm transition-colors ${
                 activeSection === item.title
-                  ? 'bg-sidebar-active text-white' // Ensure this class provides sufficient contrast and visual cue
+                  ? 'bg-sidebar-active text-white'
                   : 'hover:bg-sidebar-hover hover:text-sidebar-foreground-hover'
               }`}
               onClick={() => handleNavClick(item.title)}
@@ -251,8 +386,6 @@ export default function BaseDashboardLayout({
             </button>
           ))}
         </nav>
-
-        {/* Minimized Cards Tray */}
         {dashboardCards.length > 0 && minimizedCards.length > 0 && (
           <div className="border-t border-sidebar-border p-2">
             {sidebarExpanded && <h4 className="text-xs font-medium text-sidebar-muted-foreground mb-1 px-1">Minimized</h4>}
@@ -276,15 +409,14 @@ export default function BaseDashboardLayout({
         {sidebarFooterContent && <div className="border-t border-sidebar-border">{sidebarFooterContent}</div>}
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-hidden flex flex-col">
+      {/* Main Content Area & Header Wrapper */}
+      <div className="flex-1 flex flex-col overflow-hidden"> {/* This div will contain Header and Main content */}
         {/* Header */}
-        <header className="bg-white border-b flex flex-col shadow-sm">
+        <header className="bg-white border-b flex flex-col shadow-sm z-20"> {/* z-20 for header */}
           <div className="p-4 flex justify-between items-center h-16">
             <h1 className="text-xl font-semibold text-gray-700">{activeSection}</h1>
             <div className="flex items-center gap-3 sm:gap-4">
               {headerRightContent}
-              {/* Notifications */}
               <div className="relative">
                 <button
                   className="p-2 rounded-full hover:bg-gray-100 relative text-gray-600"
@@ -306,7 +438,7 @@ export default function BaseDashboardLayout({
                         </button>
                       )}
                     </div>
-                    <div className="max-h-80 overflow-y-auto">
+                    <div className="max-h-80 overflow-y-auto custom-scrollbar">
                       {notifications.length === 0 ? (
                         <div className="p-4 text-center text-sm text-gray-500">No new notifications</div>
                       ) : (
@@ -316,7 +448,6 @@ export default function BaseDashboardLayout({
                             className={`p-3 border-b border-gray-100 text-sm ${notification.read ? 'text-gray-600' : 'bg-indigo-50 font-medium text-gray-800'}`}
                           >
                             <p>{notification.text}</p>
-                            {/* Optional: display timestamp or link */}
                           </div>
                         ))
                       )}
@@ -329,7 +460,6 @@ export default function BaseDashboardLayout({
                   </div>
                 )}
               </div>
-              {/* User Menu */}
               <div className="relative user-menu" ref={userMenuRef}>
                 <button
                   className="p-1.5 rounded-full hover:bg-gray-100 text-gray-600 flex items-center gap-2"
@@ -353,10 +483,7 @@ export default function BaseDashboardLayout({
                       {userMenuItems.map((item) => (
                         <button
                           key={item.title}
-                          onClick={() => {
-                            item.action();
-                            setShowUserMenuDropdown(false);
-                          }}
+                          onClick={() => { item.action(); setShowUserMenuDropdown(false); }}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600"
                           role="menuitem"
                         >
@@ -369,10 +496,8 @@ export default function BaseDashboardLayout({
               </div>
             </div>
           </div>
-
-          {/* Pinned Cards Bar */}
           {dashboardCards.length > 0 && pinnedCards.length > 0 && (
-            <div className="bg-gray-50 px-4 py-2 flex gap-3 overflow-x-auto border-b items-center">
+            <div className="bg-gray-50 px-4 py-2 flex gap-3 overflow-x-auto border-b items-center custom-scrollbar">
               <Pin size={14} className="text-indigo-500 mr-1 flex-shrink-0" />
               {pinnedCards.map(cardId => {
                 const card = getCardById(cardId);
@@ -393,23 +518,37 @@ export default function BaseDashboardLayout({
           )}
         </header>
 
-        {/* Main scrollable content */}
-        <main className="flex-1 p-4 sm:p-6 overflow-auto bg-gray-50">
+        <main className="flex-1 p-4 sm:p-6 overflow-auto bg-gray-50 custom-scrollbar">
           {renderMainContent({
-            activeSection,
-            tenant,
-            dashboardCards,
-            minimizedCards,
-            maximizedCard,
-            pinnedCards,
-            toggleMinimizeCard,
-            toggleMaximizeCard,
-            togglePinCard,
-            showCustomModal,
-            setActiveSection: handleNavClick,
+            activeSection, tenant, dashboardCards, minimizedCards, maximizedCard,
+            pinnedCards, toggleMinimizeCard, toggleMaximizeCard, togglePinCard,
+            showCustomModal, setActiveSection: handleNavClick,
           })}
         </main>
       </div>
+
+      {/* Right Communication Sidebar */}
+      <div
+        className={`border-l border-gray-200 shadow-lg flex flex-col transition-all duration-300 ease-in-out z-30
+                    ${rightSidebarExpanded ? 'w-72' : 'w-0 opacity-0 pointer-events-none'}`} // w-72 is 288px
+      >
+        {/* Render content only when it would be visible to avoid issues when collapsed to w-0 */}
+        {rightSidebarExpanded && <CommunicationSidebarContent />}
+      </div>
+
+      {/* Toggle Button for Right Communication Sidebar */}
+      <button
+        onClick={() => setRightSidebarExpanded(!rightSidebarExpanded)}
+        className="fixed top-16 bg-indigo-600 text-white p-0 rounded-l-md shadow-lg hover:bg-indigo-700 z-40 transition-all duration-300 ease-in-out flex items-center justify-center"
+        style={{
+          right: rightSidebarExpanded ? '288px' : '0px', // 288px is w-72
+          width: '28px',
+          height: '44px',
+        }}
+        title={rightSidebarExpanded ? "Hide Messenger" : "Show Messenger"}
+      >
+        {rightSidebarExpanded ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+      </button>
 
       {/* Modal */}
       {isModalOpen && (
@@ -421,7 +560,7 @@ export default function BaseDashboardLayout({
                 <X size={20} />
               </button>
             </div>
-            <div className="p-4 sm:p-6 min-h-[150px] max-h-[70vh] overflow-y-auto">
+            <div className="p-4 sm:p-6 min-h-[150px] max-h-[70vh] overflow-y-auto custom-scrollbar">
               {modalContent || <p>Modal content goes here.</p>}
             </div>
             <div className="p-4 sm:p-5 border-t flex justify-end gap-3">
@@ -431,7 +570,34 @@ export default function BaseDashboardLayout({
         </div>
       )}
 
-      {/* Global Styles (e.g., for custom switch) */}
+      {/* Text Messenger Popup */}
+      {isChatPopupOpen && activeChatUser && (
+        <div
+          className={`fixed bottom-0 bg-white w-80 h-[400px] rounded-t-lg shadow-2xl z-50 flex flex-col border border-gray-300
+                      transition-all duration-300 ease-in-out
+                      ${rightSidebarExpanded ? 'right-[298px]' : 'right-5'}`} // Adjust right based on sidebar state (288px + 10px margin)
+        >
+          <div className="flex justify-between items-center p-3 bg-indigo-600 text-white rounded-t-lg h-14">
+            <h3 className="font-semibold text-sm truncate" title={`Chat with ${activeChatUser.name}`}>Chat with {activeChatUser.name}</h3>
+            <button onClick={closeChatPopup} className="p-1 rounded-full hover:bg-indigo-700 text-white">
+              <X size={18} />
+            </button>
+          </div>
+          <div className="flex-1 p-4 overflow-y-auto custom-scrollbar">
+            <p className="text-sm text-gray-700">This is a placeholder chat window for <span className="font-medium">{activeChatUser.name}</span>.</p>
+            <p className="text-xs text-gray-500 mt-4">Future messages will appear here.</p>
+            {/* Example messages */}
+            <div className="mt-4 space-y-2 text-xs">
+                <div className="p-2 bg-gray-100 rounded-md w-fit max-w-[80%]">Hello there!</div>
+                <div className="p-2 bg-indigo-100 text-indigo-800 rounded-md w-fit max-w-[80%] ml-auto">Hi! How can I help?</div>
+            </div>
+          </div>
+          <div className="p-3 border-t border-gray-200 h-16">
+            <input type="text" placeholder="Type a message..." className="w-full p-2.5 border border-gray-300 rounded-md text-sm focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"/>
+          </div>
+        </div>
+      )}
+
       <style jsx global>{`
         /* Basic Styles for Sidebar (customize these in your global CSS or Tailwind config) */
         .bg-sidebar { background-color: #1f2937; /* Example: gray-800 */ }
@@ -441,6 +607,28 @@ export default function BaseDashboardLayout({
         .hover\\:text-sidebar-foreground-hover:hover { color: #ffffff; }
         .bg-sidebar-active { background-color: #4f46e5; /* Example: indigo-600 */ }
         .text-sidebar-muted-foreground { color: #9ca3af; /* Example: gray-400 */ }
+
+        /* Custom Scrollbar (Optional - for Webkit browsers) */
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1; /* gray-300 */
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af; /* gray-400 */
+        }
+        /* For Firefox */
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #cbd5e1 transparent; /* thumb and track */
+        }
+
 
         /* Toggle Switch (if used by child components via renderMainContent) */
         .switch { position: relative; display: inline-block; width: 34px; height: 20px; }

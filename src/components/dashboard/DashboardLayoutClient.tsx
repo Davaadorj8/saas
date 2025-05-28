@@ -3,17 +3,9 @@
 
 import { ReactNode } from 'react';
 import {
-  Home,
-  Layers,
-  User,
-  Settings,
-  Bell,
-  Maximize2,
-  Minimize2,
-  Pin,
-  X,
-  PlusCircle,
-  ChevronRight, // For Quick Links
+  Home, Layers, User, Settings, Bell,
+  Tag, Megaphone, FileText, Wrench, ShoppingCart, Package as PackageIcon, Truck, Users as UsersIcon, // Module icons
+  // Maximize2, Minimize2, Pin, X, PlusCircle, (not all used directly here)
 } from 'lucide-react';
 import type { Tenant } from '@prisma/client';
 
@@ -22,287 +14,359 @@ import BaseDashboardLayout, {
   DashboardCard as BaseDashboardCard,
   Notification as BaseNotification,
   RenderMainContentParams,
-} from './BaseDashboardLayout'; // Adjust path as necessary
+  // Assuming ShowCustomModalType is exported from BaseDashboardLayout or defined in types.ts
+} from './BaseDashboardLayout';
+
+// Import QuickBoard and its types/plugins
+import OriginalQuickBoardComponent from './quickboard/QuickBoardComponent';
+// Use the generic QuickBoardPlugin type
+import { QuickBoardPlugin, BasePluginComponentProps } from './quickboard/types';
+
+// --- IMPORT YOUR EXISTING QUICKBOARD PLUGINS ---
+import UserCountQuickBoardPlugin from './quickboard/plugins/UserCountQuickBoardPlugin';
+import ManyChatControlQuickBoardPlugin from './quickboard/plugins/ManyChatControlQuickBoardPlugin';
+import LaunchManyChatControlPlugin from './quickboard/plugins/LaunchManyChatControlPlugin';
+
+// --- MODULE AND SUBMODULE DEFINITIONS ---
+
+type IconType = React.ReactElement;
+
+interface SubmoduleDefinition {
+  id: string;
+  name: string;
+  purpose?: string;
+  pluginDefinition?: string; // Maps to a QuickBoard plugin ID
+}
+
+interface ModuleDefinition {
+  id: string; // internal id, e.g., 'sales'
+  name: string; // User-facing name, e.g., "Sales"
+  navTitle: string; // Title for navigation, incorporating icon string e.g., "🏷️ Sales"
+  icon: IconType; // ReactNode for Lucide icon component
+  purpose: string;
+  submodules: SubmoduleDefinition[];
+}
+
+const appModules: ModuleDefinition[] = [
+  {
+    id: 'sales',
+    name: 'Sales',
+    navTitle: '🏷️ Sales',
+    icon: <Tag size={20} />,
+    purpose: 'Customer-facing processes like registration, booking, orders.',
+    submodules: [
+      { id: 'sales-registration', name: 'Registration Booking', purpose: 'Handle new client registrations and initial bookings.' },
+      { id: 'sales-orders', name: 'Orders', purpose: 'Manage and track customer orders.' },
+      { id: 'sales-client-history', name: 'Client History', purpose: 'View past interactions and purchases of clients.' },
+      { id: 'sales-agent-management', name: 'Agent Management', purpose: 'Oversee sales agents and their performance.' },
+    ],
+  },
+  {
+    id: 'marketing',
+    name: 'Marketing',
+    navTitle: '📢 Marketing',
+    icon: <Megaphone size={20} />,
+    purpose: 'Campaigns, outreach, CRM, integrations (ManyChat, email, FB).',
+    submodules: [
+      { id: 'marketing-social-campaigns', name: 'Social Campaigns (ManyChat)', purpose: 'Manage social media campaigns, e.g., via ManyChat.', pluginDefinition: 'manychatControlEmbedded' }, // Example linking to an existing plugin
+      { id: 'marketing-email-blasts', name: 'Email Blasts', purpose: 'Send out mass email communications.' },
+      { id: 'marketing-meta-ads', name: 'Meta Ads', purpose: 'Manage advertising campaigns on Meta platforms.' },
+      { id: 'marketing-campaign-performance', name: 'Campaign Performance', purpose: 'Track and analyze the effectiveness of marketing campaigns.' },
+    ],
+  },
+  {
+    id: 'accounting',
+    name: 'Accounting',
+    navTitle: '🧾 Accounting',
+    icon: <FileText size={20} />,
+    purpose: 'Financial tracking: invoices, bank reconciliation, transactions.',
+    submodules: [
+      { id: 'accounting-bank-statements', name: 'Bank Statements', purpose: 'View and manage bank statements.' },
+      { id: 'accounting-reconciliation', name: 'Reconciliation', purpose: 'Reconcile financial accounts.' },
+      { id: 'accounting-payment-logs', name: 'Payment Logs', purpose: 'Track all payment transactions.' },
+      { id: 'accounting-invoicing', name: 'Invoicing', purpose: 'Create and manage invoices.' },
+    ],
+  },
+  {
+    id: 'productBuilder',
+    name: 'Product Builder',
+    navTitle: '🛠️ Product Builder',
+    icon: <Wrench size={20} />,
+    purpose: 'Creation/assembly of travel products and experiences.',
+    submodules: [
+      { id: 'pb-create-trips', name: 'Create Trips', purpose: 'Design and define new travel itineraries.' },
+      { id: 'pb-configure-packages', name: 'Configure Packages', purpose: 'Assemble services into sellable packages.' },
+      { id: 'pb-define-services', name: 'Define Services', purpose: 'Manage individual services offered.' },
+      { id: 'pb-price-management', name: 'Price Management', purpose: 'Set and adjust pricing for products and services.' },
+    ],
+  },
+  {
+    id: 'salesInventory',
+    name: 'Sales Inventory',
+    navTitle: '🛍️ Sales Inventory',
+    icon: <ShoppingCart size={20} />,
+    purpose: 'Stock of ready-to-sell packages and configured services/products.',
+    submodules: [
+      { id: 'si-stock-overview', name: 'Stock Overview', purpose: 'View current levels of sellable items.' },
+      { id: 'si-availability-calendar', name: 'Availability Calendar', purpose: 'Check availability of products/services over time.' },
+      { id: 'si-seasonal-inventory', name: 'Seasonal Inventory', purpose: 'Manage inventory adjustments for different seasons.' },
+      { id: 'si-status-updates', name: 'Status Updates', purpose: 'Track and update the status of inventory items.' },
+    ],
+  },
+  {
+    id: 'assets',
+    name: 'Assets',
+    navTitle: '📦 Assets',
+    icon: <PackageIcon size={20} />,
+    purpose: 'Physical warehouse materials (SIMs, gear, print items, etc.).',
+    submodules: [
+      { id: 'assets-physical-items', name: 'Physical Items', purpose: 'Track individual physical assets.' },
+      { id: 'assets-serial-tracking', name: 'Serial Tracking', purpose: 'Manage items by serial number.' },
+      { id: 'assets-restocking', name: 'Restocking', purpose: 'Handle the process of replenishing stock.' },
+      { id: 'assets-usage-logs', name: 'Usage Logs', purpose: 'Log the usage of assets.' },
+    ],
+  },
+  {
+    id: 'suppliers',
+    name: 'Suppliers',
+    navTitle: '🚚 Suppliers',
+    icon: <Truck size={20} />,
+    purpose: 'Registered vendors providing services or materials.',
+    submodules: [
+      { id: 'sup-directory', name: 'Supplier Directory', purpose: 'View and manage supplier profiles.', pluginDefinition: 'supplierDirectory' },
+      { id: 'sup-contracts', name: 'Contracts & Terms', purpose: 'Store agreements, rates, service scopes.', pluginDefinition: 'supplierContracts' },
+      { id: 'sup-ratings', name: 'Performance Ratings', purpose: 'Rate/review suppliers based on service quality.', pluginDefinition: 'supplierRatings' },
+      { id: 'sup-payment-setup', name: 'Payment Setup', purpose: 'Bank details, payment preferences, tax info.', pluginDefinition: 'supplierPaymentSetup' },
+    ],
+  },
+  {
+    id: 'customers',
+    name: 'Customers',
+    navTitle: '👥 Customers',
+    icon: <UsersIcon size={20} />,
+    purpose: 'Registered clients with booking/interactions and CRM history.',
+    submodules: [
+      { id: 'cust-directory', name: 'Customer Directory', purpose: 'View/edit client profiles.', pluginDefinition: 'customerDirectory' },
+      { id: 'cust-notes', name: 'Notes & Tags', purpose: 'Add internal notes, tag clients.', pluginDefinition: 'customerNotes' },
+      { id: 'cust-interaction-log', name: 'Interaction History', purpose: 'View logs of communications and activity.', pluginDefinition: 'customerInteractionLog' },
+      { id: 'cust-preferences', name: 'Loyalty & Preferences', purpose: 'Store loyalty levels, preferences, special requests.', pluginDefinition: 'customerPreferences' },
+    ],
+  },
+];
+
+// --- END MODULE AND SUBMODULE DEFINITIONS ---
+
+
+// --- PLACEHOLDER QUICKBOARD PLUGINS FOR SUBMODULES ---
+const createPlaceholderPlugin = (pluginId: string, pluginName: string): React.FC<BasePluginComponentProps> => {
+  const PlaceholderComponent: React.FC<BasePluginComponentProps> = ({ showCustomModal }) => (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold">Placeholder: {pluginName}</h3>
+      <p className="text-sm text-gray-600">Plugin ID: <code>{pluginId}</code></p>
+      <p className="mt-2">This is a placeholder component for the {pluginName} plugin. Full functionality would be implemented here.</p>
+      {showCustomModal && (
+        <button
+          onClick={() => showCustomModal(<div>Detailed content for {pluginName} from placeholder.</div>, `${pluginName} - Detail View`)}
+          className="mt-3 px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-sm"
+        >
+          Show Detail Modal Example
+        </button>
+      )}
+    </div>
+  );
+  PlaceholderComponent.displayName = `PlaceholderPlugin(${pluginName.replace(/\s+/g, '')})`;
+  return PlaceholderComponent;
+};
+
+// Supplier Module Plugins
+const SupplierDirectoryQuickBoardPlugin = createPlaceholderPlugin('supplierDirectory', 'Supplier Directory');
+const SupplierContractsQuickBoardPlugin = createPlaceholderPlugin('supplierContracts', 'Supplier Contracts & Terms');
+const SupplierRatingsQuickBoardPlugin = createPlaceholderPlugin('supplierRatings', 'Supplier Performance Ratings');
+const SupplierPaymentSetupQuickBoardPlugin = createPlaceholderPlugin('supplierPaymentSetup', 'Supplier Payment Setup');
+
+// Customer Module Plugins
+const CustomerDirectoryQuickBoardPlugin = createPlaceholderPlugin('customerDirectory', 'Customer Directory');
+const CustomerNotesQuickBoardPlugin = createPlaceholderPlugin('customerNotes', 'Customer Notes & Tags');
+const CustomerInteractionLogQuickBoardPlugin = createPlaceholderPlugin('customerInteractionLog', 'Customer Interaction History');
+const CustomerPreferencesQuickBoardPlugin = createPlaceholderPlugin('customerPreferences', 'Customer Loyalty & Preferences');
+
 
 interface DashboardLayoutClientProps {
   tenant: Tenant;
-  initialDashboardContent: ReactNode; // This is the content for the "Overview" section
+  initialDashboardContent: ReactNode;
 }
-
-// OriginalQuickBoardComponent can be moved here or imported if it's complex and used elsewhere
-const OriginalQuickBoardComponent = ({ showCustomModal }: { showCustomModal: RenderMainContentParams['showCustomModal'] }) => (
-  <div className="flex flex-col gap-6">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="p-4 border-b flex justify-between items-center">
-          <h2 className="font-semibold">Quick Links</h2>
-          <div className="flex gap-1">
-            {/* Card controls can be managed by BaseDashboardLayout if this becomes a "card" */}
-            <button onClick={() => showCustomModal(<div>Maximize Quick Links</div>, "Maximize Quick Links")} className="p-1 rounded hover:bg-gray-100"><Maximize2 size={16} /></button>
-            <button onClick={() => showCustomModal(<div>Minimize Quick Links</div>, "Minimize Quick Links")} className="p-1 rounded hover:bg-gray-100"><Minimize2 size={16} /></button>
-          </div>
-        </div>
-        <div className="p-4">
-          <div className="flex border-b mb-4">
-            <button className="px-4 py-2 font-medium border-b-2 border-orange-500 text-orange-600">Supplier</button>
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Customer</button>
-            <button className="px-4 py-2 text-gray-600 hover:text-gray-800">Product</button>
-          </div>
-          <div className="space-y-4">
-            {['Supplier View', 'Customer Portal', 'Product Catalog'].map(item => (
-              <div key={item} className="flex justify-between items-center p-2 hover:bg-gray-50 rounded-md">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-400">⊙</span>
-                  <span>{item}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button className="text-gray-500 hover:text-gray-700"><PlusCircle size={16} /></button>
-                  <button className="text-gray-500 hover:text-gray-700"><ChevronRight size={16} /></button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="p-4 border-b flex justify-between items-center">
-          <h2 className="font-semibold">Summary Stats</h2>
-           <div className="flex gap-1">
-            <button onClick={() => showCustomModal(<div>Maximize Summary Stats</div>, "Maximize Summary Stats")} className="p-1 rounded hover:bg-gray-100"><Maximize2 size={16} /></button>
-            <button onClick={() => showCustomModal(<div>Minimize Summary Stats</div>, "Minimize Summary Stats")} className="p-1 rounded hover:bg-gray-100"><Minimize2 size={16} /></button>
-          </div>
-        </div>
-        <div className="p-4 space-y-4">
-          <div className="p-4 border rounded bg-gray-50">
-            <h3 className="font-medium">Analytics Snapshot</h3>
-            <p className="text-sm text-gray-600">Key metrics will be displayed here.</p>
-          </div>
-          <div className="p-4 border rounded bg-gray-50">
-            <h3 className="font-medium">Recent Activity</h3>
-            <p className="text-sm text-gray-600">Summary of recent actions.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="font-semibold">Recent Invoices</h2>
-         <div className="flex gap-1">
-            <button onClick={() => showCustomModal(<div>Maximize Recent Invoices</div>, "Maximize Recent Invoices")} className="p-1 rounded hover:bg-gray-100"><Maximize2 size={16} /></button>
-            <button onClick={() => showCustomModal(<div>Minimize Recent Invoices</div>, "Minimize Recent Invoices")} className="p-1 rounded hover:bg-gray-100"><Minimize2 size={16} /></button>
-          </div>
-      </div>
-      <div className="p-4">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left p-2 font-medium text-gray-600">Invoice ID</th>
-                <th className="text-left p-2 font-medium text-gray-600">Status</th>
-                <th className="text-left p-2 font-medium text-gray-600">Method</th>
-                <th className="text-right p-2 font-medium text-gray-600">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="p-2">INV001</td>
-                <td className="p-2"><span className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Paid</span></td>
-                <td className="p-2">Credit Card</td>
-                <td className="p-2 text-right text-blue-600 font-medium">$250.00</td>
-              </tr>
-              <tr className="border-b hover:bg-gray-50">
-                <td className="p-2">INV002</td>
-                <td className="p-2"><span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">Pending</span></td>
-                <td className="p-2">Direct Transfer</td>
-                <td className="p-2 text-right text-blue-600 font-medium">$150.00</td>
-              </tr>
-              <tr className="hover:bg-gray-50">
-                <td className="p-2">INV003</td>
-                <td className="p-2"><span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">Overdue</span></td>
-                <td className="p-2">Paypal</td>
-                <td className="p-2 text-right text-blue-600 font-medium">$300.00</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div className="mt-4 text-sm text-gray-600">A list of recent financial transactions.</div>
-        <div className="mt-4">
-          <button className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-md text-sm font-medium">Create New Invoice</button>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 
 export default function DashboardLayoutClient({
   tenant,
   initialDashboardContent,
 }: DashboardLayoutClientProps) {
-  // --- Configuration Specific to Client Dashboard ---
-  const tenantType = 'client'; // Make sure this matches what you use in BaseDashboardLayout for localStorage keys
+  const tenantType = 'client';
 
-  const navItems: NavItem[] = [
+  // --- NAVIGATION ITEMS ---
+  const moduleNavItems: NavItem[] = appModules.map(module => ({
+    icon: module.icon,
+    title: module.navTitle, // This will be used as activeSection key
+  }));
+
+  const staticTopNavItems: NavItem[] = [
     { icon: <Home size={20} />, title: 'Overview' },
-    { icon: <Layers size={20} />, title: 'Main Board' }, // For card-based widgets
-    { icon: <Layers size={20} />, title: 'Quick Board' }, // For the original complex component
+    { icon: <Layers size={20} />, title: 'Quick Board' },
+  ];
+  
+  const staticBottomNavItems: NavItem[] = [
     { icon: <User size={20} />, title: 'My Account' },
     { icon: <Bell size={20} />, title: 'Notifications' },
     { icon: <Settings size={20} />, title: 'Settings' },
   ];
 
+  const navItems: NavItem[] = [
+    ...staticTopNavItems,
+    ...moduleNavItems,
+    // Consider how to best integrate bottom items if BaseDashboardLayout supports sections
+    // For now, they are just appended. BaseDashboardLayout might render them all in one list.
+    ...staticBottomNavItems, 
+  ];
+
+
   const clientDashboardCards: BaseDashboardCard[] = [
     { id: 'client-card-1', title: 'Global Analytics', color: 'bg-blue-100' },
     { id: 'client-card-2', title: 'Team Tasks', color: 'bg-green-100' },
-    { id: 'client-card-3', title: 'Financial Reports', color: 'bg-yellow-100' },
-    { id: 'client-card-4', title: 'User Management', color: 'bg-purple-100' },
   ];
 
   const initialNotifications: BaseNotification[] = [
     { id: 'client-notif-1', text: `Welcome to ${tenant.name}'s client dashboard!`, read: false, timestamp: new Date().toISOString() },
-    { id: 'client-notif-2', text: "System update scheduled for tonight.", read: false, timestamp: new Date().toISOString() },
-    { id: 'client-notif-3', text: "Your monthly report is ready.", read: true, timestamp: new Date().toISOString() },
   ];
 
-  // --- Main Content Renderer ---
+  const getCurrentUserRoles = (): string[] => {
+    // In a real app, this would come from auth context or similar
+    return ['admin', 'marketing_user', 'analyst_user', 'procurement_user', 'sales_user', 'support_user'];
+  };
+  const currentUserRoles = getCurrentUserRoles();
+
+  // --- DEFINE AVAILABLE QUICKBOARD PLUGINS ---
+  const availableQuickBoardPlugins: QuickBoardPlugin<any>[] = [
+    {
+      id: 'userCount',
+      title: 'User Statistics',
+      component: UserCountQuickBoardPlugin,
+      roles: ['admin', 'analyst_user'],
+    },
+    {
+      id: 'launchManyChatPanel',
+      title: 'ManyChat Actions',
+      component: LaunchManyChatControlPlugin,
+      roles: ['admin', 'marketing_user'],
+      props: {
+        buttonLabel: "Open ManyChat Panel",
+        modalTitle: "ManyChat Control Center"
+      }
+    },
+    // This is the actual ManyChat control panel that can be embedded or launched by LaunchManyChatControlPlugin
+    {
+      id: 'manychatControlEmbedded', 
+      title: 'Embedded ManyChat Controls',
+      component: ManyChatControlQuickBoardPlugin,
+      roles: ['admin', 'marketing_user'],
+    },
+
+    // Supplier Module Plugins
+    { id: 'supplierDirectory', title: 'Supplier Directory', component: SupplierDirectoryQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
+    { id: 'supplierContracts', title: 'Supplier Contracts', component: SupplierContractsQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
+    { id: 'supplierRatings', title: 'Supplier Ratings', component: SupplierRatingsQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
+    { id: 'supplierPaymentSetup', title: 'Supplier Payment Setup', component: SupplierPaymentSetupQuickBoardPlugin, roles: ['admin', 'procurement_user'] },
+
+    // Customer Module Plugins
+    { id: 'customerDirectory', title: 'Customer Directory', component: CustomerDirectoryQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
+    { id: 'customerNotes', title: 'Customer Notes & Tags', component: CustomerNotesQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
+    { id: 'customerInteractionLog', title: 'Customer Interaction Log', component: CustomerInteractionLogQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
+    { id: 'customerPreferences', title: 'Customer Preferences', component: CustomerPreferencesQuickBoardPlugin, roles: ['admin', 'sales_user', 'support_user'] },
+  ];
+
   const renderMainContent = ({
     activeSection,
-    dashboardCards = clientDashboardCards, // Default to client cards
-    minimizedCards,
-    maximizedCard,
-    pinnedCards,
-    toggleMinimizeCard,
-    toggleMaximizeCard,
-    togglePinCard,
+    // dashboardCards, // Not used if 'Main Board' is removed or handled differently
+    // minimizedCards, maximizedCard, pinnedCards, // Related to 'Main Board'
+    // toggleMinimizeCard, toggleMaximizeCard, togglePinCard, // Related to 'Main Board'
     showCustomModal,
   }: RenderMainContentParams): ReactNode => {
+    
+    const activeModule = appModules.find(module => module.navTitle === activeSection);
+
+    if (activeModule) {
+      return (
+        <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+          <div className="flex items-center mb-1">
+            <span className="text-2xl mr-2">{activeModule.icon}</span>
+            <h2 className="text-2xl font-semibold text-gray-800">{activeModule.name}</h2>
+          </div>
+          <p className="text-gray-600 mb-6 ml-10">{activeModule.purpose}</p>
+          
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">Submodules</h3>
+          {activeModule.submodules.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {activeModule.submodules.map(submodule => {
+                const qbPlugin = availableQuickBoardPlugins.find(p => p.id === submodule.pluginDefinition);
+                return (
+                  <div key={submodule.id} className="bg-gray-50 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                    <h4 className="text-lg font-medium text-gray-700 mb-1">{submodule.name}</h4>
+                    {submodule.purpose && <p className="text-sm text-gray-500 mb-2">{submodule.purpose}</p>}
+                    {submodule.pluginDefinition && (
+                      <div className="text-xs text-gray-400 mb-2">
+                        Plugin ID: <code>{submodule.pluginDefinition}</code>
+                        {qbPlugin ? <span className="text-green-600 ml-1 font-semibold">(✓ Plugin Ready)</span> : <span className="text-orange-500 ml-1">(Plugin not registered)</span>}
+                      </div>
+                    )}
+                    {qbPlugin && qbPlugin.component && showCustomModal && (
+                       <button
+                         onClick={() => showCustomModal(
+                           // Ensure the plugin component receives necessary props
+                           <qbPlugin.component
+                             showCustomModal={showCustomModal} // For nested modals
+                             {...(qbPlugin.props || {})} // Spread any predefined props for this plugin
+                           />,
+                           submodule.name // Modal title
+                         )}
+                         className="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm transition-colors"
+                       >
+                         Launch {submodule.name}
+                       </button>
+                    )}
+                    {!qbPlugin && submodule.pluginDefinition && (
+                        <p className="mt-2 text-sm text-red-500">This submodule plugin is defined but not available for launch.</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-gray-500">No submodules defined for this module.</p>
+          )}
+        </div>
+      );
+    }
+
+    // Handle static sections
     switch (activeSection) {
       case 'Overview':
         return initialDashboardContent;
 
-      case 'Main Board': // This section uses the card layout from BaseDashboardLayout
-        if (maximizedCard !== null && dashboardCards.some(c => c.id === maximizedCard)) {
-          const card = dashboardCards.find(c => c.id === maximizedCard);
-          return (
-            <div className="bg-white rounded-lg shadow-xl p-4 sm:p-6 h-full flex flex-col">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-700">{card?.title}</h2>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => togglePinCard(maximizedCard)}
-                    className={`p-1.5 rounded hover:bg-gray-100 ${pinnedCards.includes(maximizedCard) ? 'text-indigo-600' : 'text-gray-500'}`}
-                    title={pinnedCards.includes(maximizedCard) ? "Unpin Card" : "Pin Card"}
-                  >
-                    <Pin size={18} />
-                  </button>
-                  <button
-                    onClick={() => toggleMinimizeCard(maximizedCard)}
-                    className="p-1.5 rounded hover:bg-gray-100 text-gray-500"
-                    title="Minimize Card"
-                  >
-                    <Minimize2 size={18} />
-                  </button>
-                  <button
-                    onClick={() => toggleMaximizeCard(maximizedCard)} // This will set maximizedCard to null
-                    className="p-1.5 rounded hover:bg-gray-100 text-gray-500"
-                    title="Restore Down"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              </div>
-              <div className="flex-1 bg-gray-100 rounded p-4 flex items-center justify-center text-gray-600">
-                Maximized Content for {card?.title} (Client).
-                {/* Example: <AnalyticsDetailsWidget data={card.data} /> */}
-              </div>
-            </div>
-          );
-        }
+      case 'Quick Board':
         return (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {dashboardCards
-              .filter(card => !minimizedCards.includes(card.id))
-              .map(card => (
-                <div
-                  key={card.id}
-                  className={`${card.color || 'bg-indigo-100'} rounded-lg shadow-md p-4 min-h-[160px] flex flex-col transition-shadow hover:shadow-lg`}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-700">{card.title}</h3>
-                    <div className="flex gap-1">
-                      <button onClick={() => togglePinCard(card.id)} className={`p-1 rounded hover:bg-white/30 ${pinnedCards.includes(card.id) ? 'text-indigo-700' : 'text-gray-600'}`} title={pinnedCards.includes(card.id) ? "Unpin" : "Pin"}> <Pin size={16} /> </button>
-                      <button onClick={() => toggleMinimizeCard(card.id)} className="p-1 rounded hover:bg-white/30 text-gray-600" title="Minimize"> <Minimize2 size={16} /> </button>
-                      <button onClick={() => toggleMaximizeCard(card.id)} className="p-1 rounded hover:bg-white/30 text-gray-600" title="Maximize"> <Maximize2 size={16} /> </button>
-                      <button
-                        onClick={() => showCustomModal(
-                          <div>Client-specific modal content for {card.title}.</div>,
-                          `${card.title} - Options`
-                        )}
-                        className="p-1 rounded hover:bg-white/30 text-gray-600"
-                        title="More Options"
-                      >
-                        <Layers size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex-1 flex items-center justify-center text-sm text-gray-500">
-                    Summary for {card.title} (Client).
-                  </div>
-                </div>
-            ))}
-            <button
-              onClick={() => showCustomModal(
-                <div>Form or options to add a new widget to the client main board.</div>,
-                "Add New Widget"
-              )}
-              className="bg-white border-2 border-dashed border-gray-300 rounded-lg shadow-sm p-4 min-h-[160px] flex flex-col items-center justify-center text-gray-400 hover:border-indigo-500 hover:text-indigo-500 transition-colors group"
-            >
-              <PlusCircle size={32} className="mb-2 group-hover:scale-110 transition-transform" />
-              <span className="font-medium">Add Widget</span>
-            </button>
-          </div>
+          <OriginalQuickBoardComponent
+            showCustomModal={showCustomModal}
+            plugins={availableQuickBoardPlugins}
+            userRoles={currentUserRoles}
+          />
         );
-
-      case 'Quick Board': // Section for the original complex component
-        return <OriginalQuickBoardComponent showCustomModal={showCustomModal} />;
 
       case 'My Account':
-        return (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">My Client Account</h2>
-            <p>Details specific to the logged-in client user.</p>
-            <p>Tenant ID: {tenant.id}</p>
-            <p>Tenant Name: {tenant.name}</p>
-            {/* Add more user-specific details here */}
-          </div>
-        );
-
+        return ( <div className="bg-white p-6 rounded-lg shadow"> <h2 className="text-xl font-semibold mb-4">My Client Account</h2> <p>Details about the client's account would go here.</p></div> );
       case 'Notifications':
-        return (
-            <div className="bg-white p-6 rounded-lg shadow">
-                <h2 className="text-xl font-semibold mb-4">All Client Notifications</h2>
-                <p>This page would display a full list of your client-related notifications.</p>
-                <ul>
-                    {initialNotifications.map(n => <li key={n.id} className={`${n.read ? 'text-gray-500' : 'font-bold'}`}>{n.text}</li>)}
-                </ul>
-            </div>
-        );
-
+        return ( <div className="bg-white p-6 rounded-lg shadow"> <h2 className="text-xl font-semibold mb-4">All Client Notifications</h2> <p>A list or feed of notifications.</p></div> );
       case 'Settings':
-        return (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Client Application Settings</h2>
-            <p>Configuration options relevant to the client experience.</p>
-            {/* Add client-specific settings toggles/forms */}
-          </div>
-        );
-
+        return ( <div className="bg-white p-6 rounded-lg shadow"> <h2 className="text-xl font-semibold mb-4">Client Application Settings</h2> <p>User-configurable settings.</p></div> );
       default:
-        return (
-          <div className="flex items-center justify-center h-full text-lg text-gray-500">
-            Content for '{activeSection}' (Client) is not yet implemented.
-          </div>
-        );
+        return ( <div className="flex items-center justify-center h-full text-lg text-gray-500"> Content for '{activeSection}' (Client) is not yet implemented. </div> );
     }
   };
 
@@ -311,10 +375,10 @@ export default function DashboardLayoutClient({
       tenant={tenant}
       tenantType={tenantType}
       navItems={navItems}
-      dashboardCards={clientDashboardCards} // Pass client-specific cards for the 'Main Board'
+      dashboardCards={clientDashboardCards} // May be used by BaseDashboardLayout or Overview
       initialNotifications={initialNotifications}
       renderMainContent={renderMainContent}
-      initialActiveSection="Overview" // Default to Overview
+      initialActiveSection="Overview" // Default to Overview or first module
     />
   );
 }

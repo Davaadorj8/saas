@@ -5,7 +5,6 @@
 
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
-// src/components/dashboard/BaseDashboardLayout.tsx
 __turbopack_context__.s({
     "default": (()=>BaseDashboardLayout)
 });
@@ -13,14 +12,15 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/styled-jsx/style.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/x.js [app-client] (ecmascript) <export default as X>");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$menu$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Menu$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/menu.js [app-client] (ecmascript) <export default as Menu>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$left$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronLeft$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-left.js [app-client] (ecmascript) <export default as ChevronLeft>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-right.js [app-client] (ecmascript) <export default as ChevronRight>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$bell$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Bell$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/bell.js [app-client] (ecmascript) <export default as Bell>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Pin$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/pin.js [app-client] (ecmascript) <export default as Pin>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 'use client';
+;
 ;
 ;
 ;
@@ -75,9 +75,27 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
         }
     }["BaseDashboardLayout.useState"]);
     const [showNotificationsDropdown, setShowNotificationsDropdown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [showUserMenuDropdown, setShowUserMenuDropdown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isModalOpen, setIsModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [modalContent, setModalContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [modalTitle, setModalTitle] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Details");
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const userMenuRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null); // Ref for click-outside detection
+    // User menu items with navigation
+    const userMenuItems = [
+        {
+            title: "Profile",
+            action: ()=>router.push('/profile')
+        },
+        {
+            title: "Settings",
+            action: ()=>router.push('/settings')
+        },
+        {
+            title: "Logout",
+            action: ()=>router.push('/logout')
+        }
+    ];
     // --- Effects for localStorage ---
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "BaseDashboardLayout.useEffect": ()=>{
@@ -109,6 +127,22 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
         notifications,
         LSK_NOTIFICATIONS
     ]);
+    // Click-outside handler for user menu dropdown
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "BaseDashboardLayout.useEffect": ()=>{
+            const handleClickOutside = {
+                "BaseDashboardLayout.useEffect.handleClickOutside": (event)=>{
+                    if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                        setShowUserMenuDropdown(false);
+                    }
+                }
+            }["BaseDashboardLayout.useEffect.handleClickOutside"];
+            document.addEventListener('mousedown', handleClickOutside);
+            return ({
+                "BaseDashboardLayout.useEffect": ()=>document.removeEventListener('mousedown', handleClickOutside)
+            })["BaseDashboardLayout.useEffect"];
+        }
+    }["BaseDashboardLayout.useEffect"], []);
     // --- Helper Functions ---
     const toggleSidebar = ()=>setSidebarExpanded(!sidebarExpanded);
     const toggleMinimizeCard = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
@@ -188,355 +222,434 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
     };
     const getCardById = (cardId)=>dashboardCards.find((c)=>c.id === cardId);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "jsx-8964303b7f1bef1c" + " " + "flex h-screen bg-gray-100 text-gray-800",
+        className: "jsx-391b31fde8081700" + " " + "flex h-screen bg-gray-100 text-gray-800",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "jsx-8964303b7f1bef1c" + " " + `bg-sidebar text-sidebar-foreground flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} transition-all duration-300 shadow-lg`,
+                className: "jsx-391b31fde8081700" + " " + `bg-sidebar text-sidebar-foreground flex flex-col ${sidebarExpanded ? 'w-64' : 'w-16'} transition-all duration-300 shadow-lg`,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "flex items-center justify-between p-4 border-b border-sidebar-border h-16",
+                        className: "jsx-391b31fde8081700" + " " + "flex items-center justify-between p-4 border-b border-sidebar-border h-16",
                         children: [
                             sidebarExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 title: tenant.name,
-                                className: "jsx-8964303b7f1bef1c" + " " + "font-semibold text-lg truncate",
+                                className: "jsx-391b31fde8081700" + " " + "font-semibold text-lg truncate",
                                 children: tenant.name
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 207,
+                                lineNumber: 232,
                                 columnNumber: 31
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: toggleSidebar,
-                                className: "jsx-8964303b7f1bef1c" + " " + "p-1 rounded hover:bg-sidebar-hover text-sidebar-foreground",
+                                className: "jsx-391b31fde8081700" + " " + "p-1 rounded hover:bg-sidebar-hover text-sidebar-foreground",
                                 children: sidebarExpanded ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$left$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronLeft$3e$__["ChevronLeft"], {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 209,
+                                    lineNumber: 234,
                                     columnNumber: 32
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 209,
+                                    lineNumber: 234,
                                     columnNumber: 60
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 208,
+                                lineNumber: 233,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 206,
+                        lineNumber: 231,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "flex-1 overflow-y-auto py-2",
+                        className: "jsx-391b31fde8081700" + " " + "flex-1 overflow-y-auto py-2",
                         children: navItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 title: item.title,
                                 onClick: ()=>handleNavClick(item.title),
-                                className: "jsx-8964303b7f1bef1c" + " " + `flex items-center w-full p-3 text-sm transition-colors ${activeSection === item.title ? 'bg-sidebar-active text-white' // Ensure this class provides sufficient contrast and visual cue
+                                className: "jsx-391b31fde8081700" + " " + `flex items-center w-full p-3 text-sm transition-colors ${activeSection === item.title ? 'bg-sidebar-active text-white' // Ensure this class provides sufficient contrast and visual cue
                                  : 'hover:bg-sidebar-hover hover:text-sidebar-foreground-hover'}`,
                                 children: [
                                     item.icon,
                                     sidebarExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "jsx-8964303b7f1bef1c" + " " + "ml-3 truncate",
+                                        className: "jsx-391b31fde8081700" + " " + "ml-3 truncate",
                                         children: item.title
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 225,
+                                        lineNumber: 250,
                                         columnNumber: 35
                                     }, this)
                                 ]
                             }, item.title, true, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 214,
+                                lineNumber: 239,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 212,
+                        lineNumber: 237,
                         columnNumber: 9
                     }, this),
                     dashboardCards.length > 0 && minimizedCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "border-t border-sidebar-border p-2",
+                        className: "jsx-391b31fde8081700" + " " + "border-t border-sidebar-border p-2",
                         children: [
                             sidebarExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
-                                className: "jsx-8964303b7f1bef1c" + " " + "text-xs font-medium text-sidebar-muted-foreground mb-1 px-1",
+                                className: "jsx-391b31fde8081700" + " " + "text-xs font-medium text-sidebar-muted-foreground mb-1 px-1",
                                 children: "Minimized"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 233,
+                                lineNumber: 258,
                                 columnNumber: 33
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "jsx-8964303b7f1bef1c" + " " + `flex ${sidebarExpanded ? 'flex-wrap gap-1' : 'flex-col items-center gap-1'}`,
+                                className: "jsx-391b31fde8081700" + " " + `flex ${sidebarExpanded ? 'flex-wrap gap-1' : 'flex-col items-center gap-1'}`,
                                 children: minimizedCards.map((cardId)=>{
                                     const card = getCardById(cardId);
                                     return card ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         onClick: ()=>restoreCardFromMinimized(cardId),
                                         title: `Restore ${card.title}`,
-                                        className: "jsx-8964303b7f1bef1c" + " " + "bg-gray-700 text-xs p-1.5 rounded flex items-center text-white hover:bg-gray-600 w-full sm:w-auto justify-center truncate",
+                                        className: "jsx-391b31fde8081700" + " " + "bg-gray-700 text-xs p-1.5 rounded flex items-center text-white hover:bg-gray-600 w-full sm:w-auto justify-center truncate",
                                         children: sidebarExpanded ? card.title : card.title.charAt(0).toUpperCase()
                                     }, cardId, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 238,
+                                        lineNumber: 263,
                                         columnNumber: 19
                                     }, this) : null;
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 234,
-                                columnNumber: 13
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 232,
-                        columnNumber: 11
-                    }, this),
-                    sidebarFooterContent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "border-t border-sidebar-border",
-                        children: sidebarFooterContent
-                    }, void 0, false, {
-                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 251,
-                        columnNumber: 35
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 205,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "jsx-8964303b7f1bef1c" + " " + "flex-1 overflow-hidden flex flex-col",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "bg-white border-b flex flex-col shadow-sm",
-                        children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "jsx-8964303b7f1bef1c" + " " + "p-4 flex justify-between items-center h-16",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                        className: "jsx-8964303b7f1bef1c" + " " + "text-xl font-semibold text-gray-700",
-                                        children: activeSection
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 259,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "jsx-8964303b7f1bef1c" + " " + "flex items-center gap-3 sm:gap-4",
-                                        children: [
-                                            headerRightContent,
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "jsx-8964303b7f1bef1c" + " " + "relative",
-                                                children: [
-                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                        onClick: toggleNotifications,
-                                                        title: "Notifications",
-                                                        className: "jsx-8964303b7f1bef1c" + " " + "p-2 rounded-full hover:bg-gray-100 relative text-gray-600",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$bell$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Bell$3e$__["Bell"], {
-                                                                size: 20
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 269,
-                                                                columnNumber: 19
-                                                            }, this),
-                                                            notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "jsx-8964303b7f1bef1c" + " " + "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 271,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 264,
-                                                        columnNumber: 17
-                                                    }, this),
-                                                    showNotificationsDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-8964303b7f1bef1c" + " " + "absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-20 border",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-8964303b7f1bef1c" + " " + "p-3 border-b flex justify-between items-center",
-                                                                children: [
-                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                                                        className: "jsx-8964303b7f1bef1c" + " " + "font-medium text-sm",
-                                                                        children: "Notifications"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 277,
-                                                                        columnNumber: 23
-                                                                    }, this),
-                                                                    notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                        onClick: markAllNotificationsAsRead,
-                                                                        className: "jsx-8964303b7f1bef1c" + " " + "text-xs text-indigo-600 hover:underline",
-                                                                        children: "Mark all as read"
-                                                                    }, void 0, false, {
-                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 279,
-                                                                        columnNumber: 25
-                                                                    }, this)
-                                                                ]
-                                                            }, void 0, true, {
-                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 276,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-8964303b7f1bef1c" + " " + "max-h-80 overflow-y-auto",
-                                                                children: notifications.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                    className: "jsx-8964303b7f1bef1c" + " " + "p-4 text-center text-sm text-gray-500",
-                                                                    children: "No new notifications"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                    lineNumber: 286,
-                                                                    columnNumber: 25
-                                                                }, this) : notifications.map((notification)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                        className: "jsx-8964303b7f1bef1c" + " " + `p-3 border-b border-gray-100 text-sm ${notification.read ? 'text-gray-600' : 'bg-indigo-50 font-medium text-gray-800'}`,
-                                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                            className: "jsx-8964303b7f1bef1c",
-                                                                            children: notification.text
-                                                                        }, void 0, false, {
-                                                                            fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                            lineNumber: 293,
-                                                                            columnNumber: 29
-                                                                        }, this)
-                                                                    }, notification.id, false, {
-                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 289,
-                                                                        columnNumber: 27
-                                                                    }, this))
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 284,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            notifications.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-8964303b7f1bef1c" + " " + "p-2 text-center border-t",
-                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                                    onClick: ()=>{
-                                                                        handleNavClick("Notifications");
-                                                                        setShowNotificationsDropdown(false);
-                                                                    },
-                                                                    className: "jsx-8964303b7f1bef1c" + " " + "text-xs text-indigo-600 hover:underline",
-                                                                    children: "View all notifications"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                    lineNumber: 301,
-                                                                    columnNumber: 29
-                                                                }, this)
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 300,
-                                                                columnNumber: 25
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 275,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                lineNumber: 263,
-                                                columnNumber: 15
-                                            }, this),
-                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                title: "User Menu",
-                                                className: "jsx-8964303b7f1bef1c" + " " + "p-1.5 rounded-full hover:bg-gray-100 text-gray-600",
-                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$menu$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Menu$3e$__["Menu"], {
-                                                    size: 20
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                    lineNumber: 309,
-                                                    columnNumber: 17
-                                                }, this)
-                                            }, void 0, false, {
-                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                lineNumber: 308,
-                                                columnNumber: 15
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 260,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 258,
-                                columnNumber: 11
-                            }, this),
-                            dashboardCards.length > 0 && pinnedCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "jsx-8964303b7f1bef1c" + " " + "bg-gray-50 px-4 py-2 flex gap-3 overflow-x-auto border-b items-center",
-                                children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Pin$3e$__["Pin"], {
-                                        size: 14,
-                                        className: "text-indigo-500 mr-1 flex-shrink-0"
-                                    }, void 0, false, {
-                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 317,
-                                        columnNumber: 16
-                                    }, this),
-                                    pinnedCards.map((cardId)=>{
-                                        const card = getCardById(cardId);
-                                        return card ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "jsx-8964303b7f1bef1c" + " " + "flex-shrink-0 items-center px-3 py-1.5 bg-white rounded-md shadow-sm border text-sm",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "jsx-8964303b7f1bef1c" + " " + "font-medium text-gray-700",
-                                                    children: card.title
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                    lineNumber: 322,
-                                                    columnNumber: 21
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                    onClick: ()=>togglePinCard(cardId),
-                                                    title: `Unpin ${card.title}`,
-                                                    className: "jsx-8964303b7f1bef1c" + " " + "ml-2 text-gray-400 hover:text-red-500",
-                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__["X"], {
-                                                        size: 14
-                                                    }, void 0, false, {
-                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 328,
-                                                        columnNumber: 23
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                    lineNumber: 323,
-                                                    columnNumber: 21
-                                                }, this)
-                                            ]
-                                        }, cardId, true, {
-                                            fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                            lineNumber: 321,
-                                            columnNumber: 19
-                                        }, this) : null;
-                                    })
-                                ]
-                            }, void 0, true, {
-                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 316,
+                                lineNumber: 259,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
                         lineNumber: 257,
+                        columnNumber: 11
+                    }, this),
+                    sidebarFooterContent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                        className: "jsx-391b31fde8081700" + " " + "border-t border-sidebar-border",
+                        children: sidebarFooterContent
+                    }, void 0, false, {
+                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                        lineNumber: 276,
+                        columnNumber: 34
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                lineNumber: 230,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "jsx-391b31fde8081700" + " " + "flex-1 overflow-hidden flex flex-col",
+                children: [
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
+                        className: "jsx-391b31fde8081700" + " " + "bg-white border-b flex flex-col shadow-sm",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "jsx-391b31fde8081700" + " " + "p-4 flex justify-between items-center h-16",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                        className: "jsx-391b31fde8081700" + " " + "text-xl font-semibold text-gray-700",
+                                        children: activeSection
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                        lineNumber: 284,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        className: "jsx-391b31fde8081700" + " " + "flex items-center gap-3 sm:gap-4",
+                                        children: [
+                                            headerRightContent,
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                className: "jsx-391b31fde8081700" + " " + "relative",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        onClick: toggleNotifications,
+                                                        title: "Notifications",
+                                                        className: "jsx-391b31fde8081700" + " " + "p-2 rounded-full hover:bg-gray-100 relative text-gray-600",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$bell$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Bell$3e$__["Bell"], {
+                                                                size: 20
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 294,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "jsx-391b31fde8081700" + " " + "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 296,
+                                                                columnNumber: 21
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                        lineNumber: 289,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    showNotificationsDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "jsx-391b31fde8081700" + " " + "absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-20 border",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "p-3 border-b flex justify-between items-center",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                                                                        className: "jsx-391b31fde8081700" + " " + "font-medium text-sm",
+                                                                        children: "Notifications"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 302,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                        onClick: markAllNotificationsAsRead,
+                                                                        className: "jsx-391b31fde8081700" + " " + "text-xs text-indigo-600 hover:underline",
+                                                                        children: "Mark all as read"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 304,
+                                                                        columnNumber: 25
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 301,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "max-h-80 overflow-y-auto",
+                                                                children: notifications.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                    className: "jsx-391b31fde8081700" + " " + "p-4 text-center text-sm text-gray-500",
+                                                                    children: "No new notifications"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                    lineNumber: 311,
+                                                                    columnNumber: 25
+                                                                }, this) : notifications.map((notification)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                        className: "jsx-391b31fde8081700" + " " + `p-3 border-b border-gray-100 text-sm ${notification.read ? 'text-gray-600' : 'bg-indigo-50 font-medium text-gray-800'}`,
+                                                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                            className: "jsx-391b31fde8081700",
+                                                                            children: notification.text
+                                                                        }, void 0, false, {
+                                                                            fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                            lineNumber: 318,
+                                                                            columnNumber: 29
+                                                                        }, this)
+                                                                    }, notification.id, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 314,
+                                                                        columnNumber: 27
+                                                                    }, this))
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 309,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            notifications.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "p-2 text-center border-t",
+                                                                children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                    onClick: ()=>{
+                                                                        handleNavClick("Notifications");
+                                                                        setShowNotificationsDropdown(false);
+                                                                    },
+                                                                    className: "jsx-391b31fde8081700" + " " + "text-xs text-indigo-600 hover:underline",
+                                                                    children: "View all notifications"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                    lineNumber: 326,
+                                                                    columnNumber: 25
+                                                                }, this)
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 325,
+                                                                columnNumber: 23
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                        lineNumber: 300,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                lineNumber: 288,
+                                                columnNumber: 15
+                                            }, this),
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                ref: userMenuRef,
+                                                className: "jsx-391b31fde8081700" + " " + "relative user-menu",
+                                                children: [
+                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                        onClick: ()=>setShowUserMenuDropdown(!showUserMenuDropdown),
+                                                        title: "User Menu",
+                                                        "aria-expanded": showUserMenuDropdown,
+                                                        "aria-label": "User menu",
+                                                        className: "jsx-391b31fde8081700" + " " + "p-1.5 rounded-full hover:bg-gray-100 text-gray-600 flex items-center gap-2",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-medium",
+                                                                children: tenant.name.charAt(0).toUpperCase()
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 341,
+                                                                columnNumber: 19
+                                                            }, this),
+                                                            sidebarExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "jsx-391b31fde8081700" + " " + "text-sm font-medium",
+                                                                children: tenant.name
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 344,
+                                                                columnNumber: 39
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                        lineNumber: 334,
+                                                        columnNumber: 17
+                                                    }, this),
+                                                    showUserMenuDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        role: "menu",
+                                                        className: "jsx-391b31fde8081700" + " " + "absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 border",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "p-3 border-b",
+                                                                children: [
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                        className: "jsx-391b31fde8081700" + " " + "text-sm font-medium text-gray-700",
+                                                                        children: tenant.name
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 349,
+                                                                        columnNumber: 23
+                                                                    }, this),
+                                                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                                        className: "jsx-391b31fde8081700" + " " + "text-xs text-gray-500",
+                                                                        children: "User Role"
+                                                                    }, void 0, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 350,
+                                                                        columnNumber: 23
+                                                                    }, this)
+                                                                ]
+                                                            }, void 0, true, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 348,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                                className: "jsx-391b31fde8081700" + " " + "py-1",
+                                                                children: userMenuItems.map((item)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                                        onClick: ()=>{
+                                                                            item.action();
+                                                                            setShowUserMenuDropdown(false);
+                                                                        },
+                                                                        role: "menuitem",
+                                                                        className: "jsx-391b31fde8081700" + " " + "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600",
+                                                                        children: item.title
+                                                                    }, item.title, false, {
+                                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                        lineNumber: 354,
+                                                                        columnNumber: 25
+                                                                    }, this))
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                                lineNumber: 352,
+                                                                columnNumber: 21
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                        lineNumber: 347,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                lineNumber: 333,
+                                                columnNumber: 15
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                        lineNumber: 285,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                lineNumber: 283,
+                                columnNumber: 11
+                            }, this),
+                            dashboardCards.length > 0 && pinnedCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "jsx-391b31fde8081700" + " " + "bg-gray-50 px-4 py-2 flex gap-3 overflow-x-auto border-b items-center",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Pin$3e$__["Pin"], {
+                                        size: 14,
+                                        className: "text-indigo-500 mr-1 flex-shrink-0"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                        lineNumber: 376,
+                                        columnNumber: 15
+                                    }, this),
+                                    pinnedCards.map((cardId)=>{
+                                        const card = getCardById(cardId);
+                                        return card ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "jsx-391b31fde8081700" + " " + "flex-shrink-0 items-center px-3 py-1.5 bg-white rounded-md shadow-sm border text-sm",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                    className: "jsx-391b31fde8081700" + " " + "font-medium text-gray-700",
+                                                    children: card.title
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                    lineNumber: 381,
+                                                    columnNumber: 21
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                    onClick: ()=>togglePinCard(cardId),
+                                                    title: `Unpin ${card.title}`,
+                                                    className: "jsx-391b31fde8081700" + " " + "ml-2 text-gray-400 hover:text-red-500",
+                                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__["X"], {
+                                                        size: 14
+                                                    }, void 0, false, {
+                                                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                        lineNumber: 387,
+                                                        columnNumber: 23
+                                                    }, this)
+                                                }, void 0, false, {
+                                                    fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                                    lineNumber: 382,
+                                                    columnNumber: 21
+                                                }, this)
+                                            ]
+                                        }, cardId, true, {
+                                            fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                            lineNumber: 380,
+                                            columnNumber: 19
+                                        }, this) : null;
+                                    })
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                                lineNumber: 375,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
+                        lineNumber: 282,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
-                        className: "jsx-8964303b7f1bef1c" + " " + "flex-1 p-4 sm:p-6 overflow-auto bg-gray-50",
+                        className: "jsx-391b31fde8081700" + " " + "flex-1 p-4 sm:p-6 overflow-auto bg-gray-50",
                         children: renderMainContent({
                             activeSection,
                             tenant,
@@ -552,106 +665,110 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 338,
+                        lineNumber: 397,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 255,
+                lineNumber: 280,
                 columnNumber: 7
             }, this),
             isModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "jsx-8964303b7f1bef1c" + " " + "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4",
+                className: "jsx-391b31fde8081700" + " " + "fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "jsx-8964303b7f1bef1c" + " " + "bg-white w-full max-w-2xl rounded-lg shadow-xl flex flex-col",
+                    className: "jsx-391b31fde8081700" + " " + "bg-white w-full max-w-2xl rounded-lg shadow-xl flex flex-col",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "jsx-8964303b7f1bef1c" + " " + "flex justify-between items-center p-4 sm:p-5 border-b",
+                            className: "jsx-391b31fde8081700" + " " + "flex justify-between items-center p-4 sm:p-5 border-b",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                    className: "jsx-8964303b7f1bef1c" + " " + "text-lg font-semibold text-gray-700",
+                                    className: "jsx-391b31fde8081700" + " " + "text-lg font-semibold text-gray-700",
                                     children: modalTitle
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 360,
+                                    lineNumber: 419,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: hideCustomModal,
-                                    className: "jsx-8964303b7f1bef1c" + " " + "p-1.5 rounded-full hover:bg-gray-100 text-gray-500",
+                                    className: "jsx-391b31fde8081700" + " " + "p-1.5 rounded-full hover:bg-gray-100 text-gray-500",
                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$x$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__X$3e$__["X"], {
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 362,
+                                        lineNumber: 421,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 361,
+                                    lineNumber: 420,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 359,
+                            lineNumber: 418,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "jsx-8964303b7f1bef1c" + " " + "p-4 sm:p-6 min-h-[150px] max-h-[70vh] overflow-y-auto",
+                            className: "jsx-391b31fde8081700" + " " + "p-4 sm:p-6 min-h-[150px] max-h-[70vh] overflow-y-auto",
                             children: modalContent || /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: "jsx-8964303b7f1bef1c",
+                                className: "jsx-391b31fde8081700",
                                 children: "Modal content goes here."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 366,
+                                lineNumber: 425,
                                 columnNumber: 32
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 365,
+                            lineNumber: 424,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "jsx-8964303b7f1bef1c" + " " + "p-4 sm:p-5 border-t flex justify-end gap-3",
+                            className: "jsx-391b31fde8081700" + " " + "p-4 sm:p-5 border-t flex justify-end gap-3",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 onClick: hideCustomModal,
-                                className: "jsx-8964303b7f1bef1c" + " " + "px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md",
+                                className: "jsx-391b31fde8081700" + " " + "px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md",
                                 children: "Close"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 371,
+                                lineNumber: 428,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 370,
-                            columnNumber: 14
+                            lineNumber: 427,
+                            columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                    lineNumber: 358,
+                    lineNumber: 417,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 357,
+                lineNumber: 416,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                id: "8964303b7f1bef1c",
+                id: "391b31fde8081700",
                 children: '.bg-sidebar{background-color:#1f2937}.text-sidebar-foreground{color:#e5e7eb}.border-sidebar-border{border-color:#374151}.hover\\\\:bg-sidebar-hover:hover{background-color:#374151}.hover\\\\:text-sidebar-foreground-hover:hover{color:#fff}.bg-sidebar-active{background-color:#4f46e5}.text-sidebar-muted-foreground{color:#9ca3af}.switch{width:34px;height:20px;display:inline-block;position:relative}.switch input{opacity:0;width:0;height:0}.slider{cursor:pointer;background-color:#ccc;transition:all .4s;position:absolute;inset:0}.slider:before{content:"";background-color:#fff;width:12px;height:12px;transition:all .4s;position:absolute;bottom:4px;left:4px}input:checked+.slider{background-color:#4f46e5}input:checked+.slider:before{transform:translate(14px)}.slider.round{border-radius:20px}.slider.round:before{border-radius:50%}'
             }, void 0, false, void 0, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-        lineNumber: 203,
+        lineNumber: 228,
         columnNumber: 5
     }, this);
 }
-_s(BaseDashboardLayout, "YN4eTMdvKoS4B6kTu05b6McHezQ=");
+_s(BaseDashboardLayout, "htwWqEhHYkO18Szf2mXqVA1JmQA=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
 _c = BaseDashboardLayout;
 var _c;
 __turbopack_context__.k.register(_c, "BaseDashboardLayout");

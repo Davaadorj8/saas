@@ -16,9 +16,11 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/chevron-right.js [app-client] (ecmascript) <export default as ChevronRight>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$bell$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Bell$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/bell.js [app-client] (ecmascript) <export default as Bell>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pin$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Pin$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/pin.js [app-client] (ecmascript) <export default as Pin>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/navigation.js [app-client] (ecmascript)");
 ;
 var _s = __turbopack_context__.k.signature();
 'use client';
+;
 ;
 ;
 ;
@@ -73,23 +75,25 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
         }
     }["BaseDashboardLayout.useState"]);
     const [showNotificationsDropdown, setShowNotificationsDropdown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const [showUserMenuDropdown, setShowUserMenuDropdown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false); // New state for user menu
+    const [showUserMenuDropdown, setShowUserMenuDropdown] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isModalOpen, setIsModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [modalContent, setModalContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [modalTitle, setModalTitle] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("Details");
-    // User menu items
+    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
+    const userMenuRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null); // Ref for click-outside detection
+    // User menu items with navigation
     const userMenuItems = [
         {
             title: "Profile",
-            action: ()=>console.log("Navigate to Profile")
+            action: ()=>router.push('/profile')
         },
         {
             title: "Settings",
-            action: ()=>console.log("Navigate to Settings")
+            action: ()=>router.push('/settings')
         },
         {
             title: "Logout",
-            action: ()=>console.log("Logout")
+            action: ()=>router.push('/logout')
         }
     ];
     // --- Effects for localStorage ---
@@ -123,6 +127,22 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
         notifications,
         LSK_NOTIFICATIONS
     ]);
+    // Click-outside handler for user menu dropdown
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "BaseDashboardLayout.useEffect": ()=>{
+            const handleClickOutside = {
+                "BaseDashboardLayout.useEffect.handleClickOutside": (event)=>{
+                    if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+                        setShowUserMenuDropdown(false);
+                    }
+                }
+            }["BaseDashboardLayout.useEffect.handleClickOutside"];
+            document.addEventListener('mousedown', handleClickOutside);
+            return ({
+                "BaseDashboardLayout.useEffect": ()=>document.removeEventListener('mousedown', handleClickOutside)
+            })["BaseDashboardLayout.useEffect"];
+        }
+    }["BaseDashboardLayout.useEffect"], []);
     // --- Helper Functions ---
     const toggleSidebar = ()=>setSidebarExpanded(!sidebarExpanded);
     const toggleMinimizeCard = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useCallback"])({
@@ -216,7 +236,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                 children: tenant.name
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 212,
+                                lineNumber: 232,
                                 columnNumber: 31
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -226,24 +246,24 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 214,
+                                    lineNumber: 234,
                                     columnNumber: 32
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$chevron$2d$right$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__ChevronRight$3e$__["ChevronRight"], {
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 214,
+                                    lineNumber: 234,
                                     columnNumber: 60
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 213,
+                                lineNumber: 233,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 211,
+                        lineNumber: 231,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -260,18 +280,18 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                         children: item.title
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 230,
+                                        lineNumber: 250,
                                         columnNumber: 35
                                     }, this)
                                 ]
                             }, item.title, true, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 219,
+                                lineNumber: 239,
                                 columnNumber: 13
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 217,
+                        lineNumber: 237,
                         columnNumber: 9
                     }, this),
                     dashboardCards.length > 0 && minimizedCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -282,7 +302,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                 children: "Minimized"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 238,
+                                lineNumber: 258,
                                 columnNumber: 33
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -296,19 +316,19 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                         children: sidebarExpanded ? card.title : card.title.charAt(0).toUpperCase()
                                     }, cardId, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 243,
+                                        lineNumber: 263,
                                         columnNumber: 19
                                     }, this) : null;
                                 })
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 239,
+                                lineNumber: 259,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 237,
+                        lineNumber: 257,
                         columnNumber: 11
                     }, this),
                     sidebarFooterContent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -316,13 +336,13 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                         children: sidebarFooterContent
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 256,
+                        lineNumber: 276,
                         columnNumber: 34
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 210,
+                lineNumber: 230,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -339,7 +359,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                         children: activeSection
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 264,
+                                        lineNumber: 284,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -358,20 +378,20 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                 size: 20
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 274,
+                                                                lineNumber: 294,
                                                                 columnNumber: 19
                                                             }, this),
                                                             notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 className: "jsx-391b31fde8081700" + " " + "absolute top-0 right-0 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 276,
+                                                                lineNumber: 296,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 269,
+                                                        lineNumber: 289,
                                                         columnNumber: 17
                                                     }, this),
                                                     showNotificationsDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -385,7 +405,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                         children: "Notifications"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 282,
+                                                                        lineNumber: 302,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     notifications.some((n)=>!n.read) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -394,13 +414,13 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                         children: "Mark all as read"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 284,
+                                                                        lineNumber: 304,
                                                                         columnNumber: 25
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 281,
+                                                                lineNumber: 301,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -410,7 +430,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                     children: "No new notifications"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                    lineNumber: 291,
+                                                                    lineNumber: 311,
                                                                     columnNumber: 25
                                                                 }, this) : notifications.map((notification)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                                         className: "jsx-391b31fde8081700" + " " + `p-3 border-b border-gray-100 text-sm ${notification.read ? 'text-gray-600' : 'bg-indigo-50 font-medium text-gray-800'}`,
@@ -419,17 +439,17 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                             children: notification.text
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                            lineNumber: 298,
+                                                                            lineNumber: 318,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     }, notification.id, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 294,
+                                                                        lineNumber: 314,
                                                                         columnNumber: 27
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 289,
+                                                                lineNumber: 309,
                                                                 columnNumber: 21
                                                             }, this),
                                                             notifications.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -443,32 +463,35 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                     children: "View all notifications"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                    lineNumber: 306,
+                                                                    lineNumber: 326,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 305,
+                                                                lineNumber: 325,
                                                                 columnNumber: 23
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 280,
+                                                        lineNumber: 300,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                lineNumber: 268,
+                                                lineNumber: 288,
                                                 columnNumber: 15
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "jsx-391b31fde8081700" + " " + "relative",
+                                                ref: userMenuRef,
+                                                className: "jsx-391b31fde8081700" + " " + "relative user-menu",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         onClick: ()=>setShowUserMenuDropdown(!showUserMenuDropdown),
                                                         title: "User Menu",
+                                                        "aria-expanded": showUserMenuDropdown,
+                                                        "aria-label": "User menu",
                                                         className: "jsx-391b31fde8081700" + " " + "p-1.5 rounded-full hover:bg-gray-100 text-gray-600 flex items-center gap-2",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -476,7 +499,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                 children: tenant.name.charAt(0).toUpperCase()
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 319,
+                                                                lineNumber: 341,
                                                                 columnNumber: 19
                                                             }, this),
                                                             sidebarExpanded && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -484,16 +507,17 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                 children: tenant.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 322,
+                                                                lineNumber: 344,
                                                                 columnNumber: 39
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 314,
+                                                        lineNumber: 334,
                                                         columnNumber: 17
                                                     }, this),
                                                     showUserMenuDropdown && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        role: "menu",
                                                         className: "jsx-391b31fde8081700" + " " + "absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl z-20 border",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -504,7 +528,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                         children: tenant.name
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 327,
+                                                                        lineNumber: 349,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -512,13 +536,13 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                         children: "User Role"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 328,
+                                                                        lineNumber: 350,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 326,
+                                                                lineNumber: 348,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -528,40 +552,41 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                                             item.action();
                                                                             setShowUserMenuDropdown(false);
                                                                         },
+                                                                        role: "menuitem",
                                                                         className: "jsx-391b31fde8081700" + " " + "w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600",
                                                                         children: item.title
                                                                     }, item.title, false, {
                                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                        lineNumber: 332,
+                                                                        lineNumber: 354,
                                                                         columnNumber: 25
                                                                     }, this))
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                                lineNumber: 330,
+                                                                lineNumber: 352,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 325,
+                                                        lineNumber: 347,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                lineNumber: 313,
+                                                lineNumber: 333,
                                                 columnNumber: 15
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 265,
+                                        lineNumber: 285,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 263,
+                                lineNumber: 283,
                                 columnNumber: 11
                             }, this),
                             dashboardCards.length > 0 && pinnedCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -572,7 +597,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                         className: "text-indigo-500 mr-1 flex-shrink-0"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 353,
+                                        lineNumber: 376,
                                         columnNumber: 15
                                     }, this),
                                     pinnedCards.map((cardId)=>{
@@ -585,7 +610,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                     children: card.title
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                    lineNumber: 358,
+                                                    lineNumber: 381,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -596,31 +621,31 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                                         size: 14
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                        lineNumber: 364,
+                                                        lineNumber: 387,
                                                         columnNumber: 23
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                                    lineNumber: 359,
+                                                    lineNumber: 382,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, cardId, true, {
                                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                            lineNumber: 357,
+                                            lineNumber: 380,
                                             columnNumber: 19
                                         }, this) : null;
                                     })
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 352,
+                                lineNumber: 375,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 262,
+                        lineNumber: 282,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -640,13 +665,13 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                         })
                     }, void 0, false, {
                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                        lineNumber: 374,
+                        lineNumber: 397,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 260,
+                lineNumber: 280,
                 columnNumber: 7
             }, this),
             isModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -662,7 +687,7 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                     children: modalTitle
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 396,
+                                    lineNumber: 419,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -672,18 +697,18 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                        lineNumber: 398,
+                                        lineNumber: 421,
                                         columnNumber: 17
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                    lineNumber: 397,
+                                    lineNumber: 420,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 395,
+                            lineNumber: 418,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -693,12 +718,12 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                 children: "Modal content goes here."
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 402,
+                                lineNumber: 425,
                                 columnNumber: 32
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 401,
+                            lineNumber: 424,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -709,23 +734,23 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
                                 children: "Close"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                                lineNumber: 405,
+                                lineNumber: 428,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                            lineNumber: 404,
+                            lineNumber: 427,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                    lineNumber: 394,
+                    lineNumber: 417,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-                lineNumber: 393,
+                lineNumber: 416,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -735,11 +760,15 @@ function BaseDashboardLayout({ tenant, tenantType, navItems, dashboardCards = []
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/dashboard/BaseDashboardLayout.tsx",
-        lineNumber: 208,
+        lineNumber: 228,
         columnNumber: 5
     }, this);
 }
-_s(BaseDashboardLayout, "q9ySMTi3IWX3Q4RjQGAEQY7vtOs=");
+_s(BaseDashboardLayout, "htwWqEhHYkO18Szf2mXqVA1JmQA=", false, function() {
+    return [
+        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
+    ];
+});
 _c = BaseDashboardLayout;
 var _c;
 __turbopack_context__.k.register(_c, "BaseDashboardLayout");
