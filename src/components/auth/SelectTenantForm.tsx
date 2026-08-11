@@ -19,15 +19,15 @@ export default function SelectTenantForm() {
                 msg = `The organization '${attempted || 'directory'}' was not found. Please check the name or contact support.`;
                 break;
             case 'missing_host':
-                msg = 'There was an issue determining your organization. Please try entering its address.';
+                msg = 'There was an issue opening that route. Please try entering an app directory.';
                 break;
             case 'unrecognized_host':
-                msg = 'The web path you used is not recognized. Please enter your organization\'s address.';
+                msg = 'The web path you used is not recognized. Please enter an app directory.';
                 break;
             case 'tenant_required_for_client_dashboard':
             case 'tenant_required_for_customer_dashboard':
             case 'tenant_required_for_supplier_dashboard':
-                msg = 'Access to that dashboard requires an organization directory. Please enter it below.';
+                msg = 'Open a dashboard by entering one of the app directories below.';
                 break;
             case 'tenant_db_not_found':
             case 'tenant_on_root_not_found':
