@@ -1,12 +1,13 @@
 // src/components/auth/SelectTenantForm.tsx
 "use client";
 
-import { useRouter, useSearchParams } from 'next/navigation'; // useRouter not strictly used here but fine
+import { useSearchParams } from 'next/navigation';
 import { useState, useEffect, FormEvent } from 'react';
+import { getTenantDirectoryUrl } from '@/lib/subdirectories';
 
 export default function SelectTenantForm() {
     const searchParams = useSearchParams(); // For reading error query params
-    const [subdomain, setSubdomain] = useState('');
+    const [directory, setDirectory] = useState('');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
@@ -15,30 +16,30 @@ export default function SelectTenantForm() {
         let msg: string | null = null;
         switch (error) {
             case 'unknown_tenant':
-                msg = `The organization '${attempted || 'address'}' was not found. Please check the name or contact support.`;
+                msg = `The organization '${attempted || 'directory'}' was not found. Please check the name or contact support.`;
                 break;
             case 'missing_host':
                 msg = 'There was an issue determining your organization. Please try entering its address.';
                 break;
             case 'unrecognized_host':
-                msg = 'The web address you used is not recognized. Please enter your organization\'s address.';
+                msg = 'The web path you used is not recognized. Please enter your organization\'s address.';
                 break;
             case 'tenant_required_for_client_dashboard':
             case 'tenant_required_for_customer_dashboard':
             case 'tenant_required_for_supplier_dashboard':
-                msg = 'Access to that dashboard requires an organization address. Please enter it below.';
+                msg = 'Access to that dashboard requires an organization directory. Please enter it below.';
                 break;
             case 'tenant_db_not_found':
             case 'tenant_on_root_not_found':
             case 'tenant_not_found_client_dashboard':
             case 'tenant_not_found_customer_dashboard':
             case 'tenant_not_found_supplier_dashboard':
-                msg = `We couldn't find an organization with the address '${attempted || 'provided'}'. Please check and try again.`;
+                msg = `We couldn't find an organization with the directory '${attempted || 'provided'}'. Please check and try again.`;
                 break;
             case 'incorrect_tenant_type_for_client_dashboard':
             case 'incorrect_tenant_type_for_customer_dashboard':
             case 'incorrect_tenant_type_for_supplier_dashboard':
-                msg = `The organization '${attempted || 'address'}' is not the correct type for that dashboard.`;
+                msg = `The organization '${attempted || 'directory'}' is not the correct type for that dashboard.`;
                 break;
             case 'db_error':
             case 'db_error_client_dashboard':
@@ -49,11 +50,11 @@ export default function SelectTenantForm() {
             case 'middleware_fallback':
             case 'root_page_direct_access':
             case 'root_page_unhandled':
-                msg = 'Please select or enter your organization address.';
+                msg = 'Please select or enter your organization directory.';
                 break;
             default:
                 if (error) {
-                    msg = 'An unexpected issue occurred. Please try entering your organization address.';
+                    msg = 'An unexpected issue occurred. Please try entering your organization directory.';
                 }
         }
         setErrorMessage(msg);
@@ -62,48 +63,16 @@ export default function SelectTenantForm() {
     // src/components/auth/SelectTenantForm.tsx - handleSubmit
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const trimmedSubdomain = subdomain.trim().toLowerCase();
-        if (trimmedSubdomain) {
+        const trimmedDirectory = directory.trim().toLowerCase();
+        if (trimmedDirectory) {
             if (typeof window === 'undefined') return;
 
-            let targetHost;
-            let protocol = 'http:'; // Default to HTTP for local/dev
+            const targetPath = getTenantDirectoryUrl(trimmedDirectory);
 
-            // Check if the main access point is localhost via port forwarding
-            // This condition might need adjustment based on how you access your Cloud Workstation's forwarded port
-            const isEffectivelyLocalhost = window.location.hostname === 'localhost' ||
-                                        window.location.port === '3000' || // Or whatever port you forward to locally
-                                        window.location.hostname.startsWith('127.0.0.1');
-
-
-            if (isEffectivelyLocalhost) {
-                targetHost = `${trimmedSubdomain}.localhost:3000`;
-                protocol = 'http:';
-            } else if (window.location.hostname.includes('cloudworkstations.dev')) {
-                // If HSTS is blocking HTTP on cloudworkstations.dev subdomains, this path is problematic.
-                // We are trying to force HTTP, but HSTS might prevent it.
-                // For Cloud Workstations with HSTS, direct subdomain testing becomes very hard without a proxy.
-                // Reverting to using the main Cloud Workstation URL + path-based tenancy for dev on Cloud Workstations might be easier.
-                console.warn("Attempting HTTP redirect on Cloud Workstation for subdomain, HSTS might interfere.");
-                targetHost = `${trimmedSubdomain}.${window.location.host}`;
-                protocol = 'http:';
-            } else {
-                // Production logic
-                const productionDomainEnv = process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN;
-                if (productionDomainEnv && window.location.hostname.endsWith(productionDomainEnv)) {
-                    targetHost = `${trimmedSubdomain}.${productionDomainEnv}`;
-                } else {
-                    // Fallback for other production scenarios or if NEXT_PUBLIC_PRODUCTION_DOMAIN isn't set
-                    // This might still try to use the full Vercel URL etc.
-                    targetHost = `${trimmedSubdomain}.${window.location.host}`;
-                }
-                protocol = 'https:'; // Production should be HTTPS
-            }
-
-            console.log(`Redirecting to: ${protocol}//${targetHost}`);
-            window.location.href = `${protocol}//${targetHost}`;
+            console.log(`Redirecting to: ${targetPath}`);
+            window.location.href = targetPath;
         } else {
-            setErrorMessage("Please enter your organization's address (e.g., 'acme').");
+            setErrorMessage("Please enter your organization's directory (e.g., 'client').");
         }
     };
     return (
@@ -115,7 +84,7 @@ export default function SelectTenantForm() {
             />
             <h1 className="text-3xl font-bold text-gray-800 mt-4">Welcome to SAASPro</h1> {/* Your App Name */}
             <p className="text-gray-600">
-                Please enter your organization's unique address to continue.
+                Please enter your organization's directory to continue.
             </p>
 
             {errorMessage && (
@@ -124,29 +93,24 @@ export default function SelectTenantForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4 pt-2">
                 <div>
-                    <label htmlFor="subdomain" className="sr-only">
-                        Organization Address
+                    <label htmlFor="directory" className="sr-only">
+                        Organization Directory
                     </label>
                     <div className="flex items-center">
                         <input
-                            id="subdomain"
-                            name="subdomain"
+                            id="directory"
+                            name="directory"
                             type="text"
                             required
                             className="appearance-none rounded-l-md relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="your-organization"
-                            value={subdomain}
-                            onChange={(e) => setSubdomain(e.target.value)}
+                            placeholder="client"
+                            value={directory}
+                            onChange={(e) => setDirectory(e.target.value)}
                             autoCapitalize="none"
                             spellCheck="false"
                         />
                         <span className="inline-flex items-center h-[46px] px-3 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-r-md">
-                           .{/* Display hint for the domain part */}
-                           {
-                                typeof window !== 'undefined' && window.location.hostname === 'localhost'
-                                ? 'localhost:3000'
-                                : (process.env.NEXT_PUBLIC_PRODUCTION_DOMAIN || 'saaspro.com').split(':')[0]
-                           }
+                           /dashboard
                         </span>
                     </div>
                 </div>
@@ -159,7 +123,7 @@ export default function SelectTenantForm() {
                 </button>
             </form>
             <p className="text-xs text-gray-500 pt-2">
-                Example: If your address is <code className="bg-gray-200 p-1 rounded">acme.saaspro.com</code>, enter <code className="bg-gray-200 p-1 rounded">acme</code>.
+                Example: If your dashboard is <code className="bg-gray-200 p-1 rounded">/client/dashboard</code>, enter <code className="bg-gray-200 p-1 rounded">client</code>.
             </p>
         </div>
     );
