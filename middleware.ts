@@ -2,21 +2,15 @@
 // -------------------------
 
 import { NextRequest, NextResponse } from 'next/server';
-
-// --- ENV CONFIG ---
-const PRODUCTION_DOMAIN = process.env.PRODUCTION_DOMAIN || 'saaspro.com';
-const DEV_DOMAIN = 'localhost:3000';
-const ROOT_DOMAIN = process.env.NODE_ENV === 'production'
-  ? PRODUCTION_DOMAIN
-  : DEV_DOMAIN;
+import {
+  isValidTenantDirectory,
+  resolveTenantDirectoryFromPath,
+} from './src/lib/subdirectories';
 
 // --- SETTINGS ---
 const PUBLIC_PATHS = ['/about-us', '/pricing', '/terms', '/privacy'];
 const TENANT_SELECTION = '/select-tenant';
 const AUTH_PREFIX = '/api/auth';
-
-const VALID_SUBDOMAINS = ['client', 'supplier', 'customer'];
-const RESERVED = ['www', 'app', 'api', 'mail', 'blog', 'dev', 'status', 'docs', 'assets', 'static'];
 
 // --- HELPERS ---
 const isAsset = (path: string) => /\.(ico|png|jpg|jpeg|svg|js|css|webmanifest|txt|xml)$/i.test(path);
@@ -28,7 +22,6 @@ export const config = {
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const { pathname } = url;
-  const host = request.headers.get('host') || '';
 
   // 1. Bypass static, assets, auth, and public
   if (
@@ -43,39 +36,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Host parsing
-  const root = ROOT_DOMAIN.split(':')[0];
-  let sub: string | null = null;
-  let isRootAccess = false;
+  // 2. Path parsing: tenant context comes from the first path segment.
+  const resolution = resolveTenantDirectoryFromPath(pathname);
 
-  if (host === root || host === `www.${root}`) {
-    isRootAccess = true;
-  } else if (host.endsWith(`.${root}`)) {
-    const part = host.split('.')[0];
-    if (!RESERVED.includes(part.toLowerCase())) sub = part;
-    else isRootAccess = true;
-  } else {
-    return redirectToSelection(request, 'unrecognized_host');
+  if (resolution.type === 'reserved') {
+    return NextResponse.next();
   }
 
-  // 3. Routing
-  if (sub) {
-    if (VALID_SUBDOMAINS.includes(sub.toLowerCase())) {
-      // Create new Headers instance and set tenant ID
-      const requestHeaders = new Headers(request.headers);
-      requestHeaders.set('x-tenant-id', sub);
-
-      return NextResponse.next({ request: { headers: requestHeaders } });
-    }
-    return redirectToSelection(request, 'unknown_tenant', sub);
-  }
-
-  if (isRootAccess) {
+  if (resolution.type === 'root') {
     return redirectToSelection(request, 'root_access');
   }
 
-  // Fallback
-  return redirectToSelection(request, 'middleware_unhandled');
+  // 3. Routing
+  if (isValidTenantDirectory(resolution.directory)) {
+    // Create new Headers instance and set tenant ID
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-tenant-id', resolution.directory);
+
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
+  return redirectToSelection(request, 'unknown_tenant', resolution.directory);
 }
 
 // --- REDIRECT HELPER ---
